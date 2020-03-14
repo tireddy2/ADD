@@ -5,8 +5,8 @@
 ADD                                                             T. Reddy
 Internet-Draft                                                    McAfee
 Intended status: Informational                                   D. Wing
-Expires: September 14, 2020                                       Citrix
-                                                          March 13, 2020
+Expires: September 15, 2020                                       Citrix
+                                                          March 14, 2020
 
 
   DNS-over-HTTPS and DNS-over-TLS Server Deployment Considerations for
@@ -38,7 +38,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on September 14, 2020.
+   This Internet-Draft will expire on September 15, 2020.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Reddy & Wing           Expires September 14, 2020               [Page 1]
+Reddy & Wing           Expires September 15, 2020               [Page 1]
 
 Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Reddy & Wing           Expires September 14, 2020               [Page 2]
+Reddy & Wing           Expires September 15, 2020               [Page 2]
 
 Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
 
@@ -165,7 +165,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
 
 
 
-Reddy & Wing           Expires September 14, 2020               [Page 3]
+Reddy & Wing           Expires September 15, 2020               [Page 3]
 
 Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
 
@@ -174,11 +174,11 @@ Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
 
    If a device is managed by an enterprise's IT department, the device
    can be configured to use Enterprise-provided DoH/DoT servers.  This
-   configuration might be manual or rely upon whatever deployed device
-   management tool in an Enterprise.  For example, customizing Firefox
-   using Group Policy to use the Enterprise DoH server is discussed in
-   [Firefox-Policy] for Windows and MacOS, and setting Chrome policies
-   is discussed in [Chrome-Policy].
+   configuration might be manual or rely upon a device management
+   software tool deployed by the Enterprise.  For example, customizing
+   Firefox using Group Policy to use the Enterprise DoH server is
+   discussed in [Firefox-Policy] for Windows and MacOS, and setting
+   Chrome policies is discussed in [Chrome-Policy].
 
 4.  IoT Devices
 
@@ -203,9 +203,14 @@ Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
 
    o  [RFC8572] defines a bootstrapping strategy for enabling devices to
       securely obtain the required configuration information with no
-      installer input, the onboarding information defined in Section 2.2
-      of [RFC8572] can be extended to include the local DoH/DoT server
-      information.
+      installer input.  DHCP/RA [I-D.btw-add-home] can be used to
+      discover the DoH/DoT information.  If the insecurely discovered
+      DoH/DoT information is not pre-configured in the IoT device, the
+      client can validate the Policy Assertion Token signature
+      (Section 7 [I-D.reddy-dprive-dprive-privacy-policy]) using the
+      owner certificate (Section 3.2 of [RFC8572]).  Alternatively,
+      Network Management System (NMS) can be used to provision the IoT
+      device with the DoH/DoT information (Appendix C.2 of [RFC8572]).
 
    o  The following discusses Wi-Fi authentication mechanisms supported
       by IoT devices:
@@ -214,17 +219,16 @@ Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
       derivation using a Pre-Shared Key (PSK).  Once the authentication
       is successful, EAP-PSK provides a protected communication channel.
 
-      EAP-pwd [RFC8146] is another EAP method that utilizes a shared
-      password for authentication using a PAKE scheme that is resistant
-      to dictionary attacks.
 
 
-
-
-Reddy & Wing           Expires September 14, 2020               [Page 4]
+Reddy & Wing           Expires September 15, 2020               [Page 4]
 
 Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
 
+
+      EAP-pwd [RFC8146] is another EAP method that utilizes a shared
+      password for authentication using a PAKE scheme that is resistant
+      to dictionary attacks.
 
       Not all of IoT devices support 802.1x supplicant and need an
       alternate mechanism to connect to the Enterprise network.  To
@@ -268,20 +272,22 @@ Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
    The following mechanisms can be used to bootstrap BYOD (bring your
    own device):
 
+
+
+
+
+
+Reddy & Wing           Expires September 15, 2020               [Page 5]
+
+Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
+
+
    o  If mobile device management (MDM) is used to secure BYOD, MDM can
       be used to configure OS/browser with the Enterprise provided DoH/
       DoT server.
 
    o  If an endpoint is on-boarded, for example, using Over-The-Air
       (OTA) enrollment to provision the device with a certificate and
-
-
-
-Reddy & Wing           Expires September 14, 2020               [Page 5]
-
-Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
-
-
       configuration profile, the configuration profile can include the
       URI of the DoH server and authentication domain name (ADN) of the
       DoT server.  The OS/Browser can use the configuration profile to
@@ -324,20 +330,20 @@ Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
 
    The DNS client can validate the signatory (i.e., cryptographically
    attested by the Organization hosting the DoH/DoT server) and the user
+
+
+
+Reddy & Wing           Expires September 15, 2020               [Page 6]
+
+Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
+
+
    can review human-readable privacy policy information of the DNS
    server and assess whether the DNS server performs DNS-based content
    filtering.
 
    If the discovered DoH/DoT server does not meet the privacy preserving
    data policy and filtering requirements of the user, the user can
-
-
-
-Reddy & Wing           Expires September 14, 2020               [Page 6]
-
-Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
-
-
    instruct the DNS client to take appropriate actions.  For example,
    the action can be to use the local DNS server only to access
    internal-only DNS names and use another DNS server (adhering with
@@ -349,7 +355,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
 
 8.  Acknowledgements
 
-   TBC.
+   Thanks to Mohamed Boucadair for the discussion and comments.
 
 9.  References
 
@@ -381,18 +387,16 @@ Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
               DOI 10.17487/RFC8310, March 2018,
               <https://www.rfc-editor.org/info/rfc8310>.
 
-   [RFC8484]  Hoffman, P. and P. McManus, "DNS Queries over HTTPS
-              (DoH)", RFC 8484, DOI 10.17487/RFC8484, October 2018,
-              <https://www.rfc-editor.org/info/rfc8484>.
 
 
-
-
-
-Reddy & Wing           Expires September 14, 2020               [Page 7]
+Reddy & Wing           Expires September 15, 2020               [Page 7]
 
 Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
 
+
+   [RFC8484]  Hoffman, P. and P. McManus, "DNS Queries over HTTPS
+              (DoH)", RFC 8484, DOI 10.17487/RFC8484, October 2018,
+              <https://www.rfc-editor.org/info/rfc8484>.
 
 9.2.  Informative References
 
@@ -441,11 +445,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
 
 
 
-
-
-
-
-Reddy & Wing           Expires September 14, 2020               [Page 8]
+Reddy & Wing           Expires September 15, 2020               [Page 8]
 
 Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
 
@@ -501,7 +501,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
 
 
 
-Reddy & Wing           Expires September 14, 2020               [Page 9]
+Reddy & Wing           Expires September 15, 2020               [Page 9]
 
 Internet-Draft       DoH/DoT in Enterprise Networks           March 2020
 
@@ -557,4 +557,4 @@ Authors' Addresses
 
 
 
-Reddy & Wing           Expires September 14, 2020              [Page 10]
+Reddy & Wing           Expires September 15, 2020              [Page 10]

@@ -203,9 +203,16 @@
 
           <t><xref target="RFC8572"></xref> defines a bootstrapping strategy
           for enabling devices to securely obtain the required configuration
-          information with no installer input, the onboarding information
-          defined in Section 2.2 of <xref target="RFC8572"></xref> can be
-          extended to include the local DoH/DoT server information.</t>
+          information with no installer input. DHCP/RA <xref
+          target="I-D.btw-add-home"></xref> can be used to discover the
+          DoH/DoT information. If the insecurely discovered DoH/DoT
+          information is not pre-configured in the IoT device, the client can
+          validate the Policy Assertion Token signature (Section 7 <xref
+          target="I-D.reddy-dprive-dprive-privacy-policy"></xref>) using the
+          owner certificate (Section 3.2 of <xref target="RFC8572"></xref>).
+          Alternatively, Network Management System (NMS) can be used to
+          provision the IoT device with the DoH/DoT information (Appendix C.2
+          of <xref target="RFC8572"></xref>).</t>
 
           <t>The following discusses Wi-Fi authentication mechanisms supported
           by IoT devices:<vspace blankLines="1" />EAP-PSK <xref
