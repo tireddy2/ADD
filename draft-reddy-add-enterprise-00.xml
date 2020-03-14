@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!-- This template is for creating an Internet Draft using xml2rfc,
+     which is available here: http://xml.resource.org. -->
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!-- One method to get references from the online citation libraries.
+     There has to be one entity for each item to be referenced. 
+     An alternate method (rfc include) is described in the references. -->
+]>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<!-- used by XSLT processors -->
+<!-- For a complete list and description of processing instructions (PIs), 
+     please see http://xml.resource.org/authoring/README.html. -->
+<!-- Below are generally applicable Processing Instructions (PIs) that most I-Ds might want to use.
+     (Here they are set differently than their defaults in xml2rfc v1.32) -->
+<?rfc strict="yes" ?>
+<!-- give errors regarding ID-nits and DTD validation -->
+<!-- control the table of contents (ToC) -->
+<?rfc toc="yes"?>
+<!-- generate a ToC -->
+<?rfc tocdepth="4"?>
+<!-- the number of levels of subsections in ToC. default: 3 -->
+<!-- control references -->
+<?rfc symrefs="yes"?>
+<!-- use symbolic references tags, i.e, [RFC2119] instead of [1] -->
+<?rfc sortrefs="yes" ?>
+<!-- sort the reference entries alphabetically -->
+<!-- control vertical white space 
+     (using these PIs as follows is recommended by the RFC Editor) -->
+<?rfc compact="yes" ?>
+<!-- do not start each main section on a new page -->
+<?rfc subcompact="no" ?>
+<!-- keep one blank line between list items -->
+<!-- end of list of popular I-D processing instructions -->
+<rfc category="info" docName="draft-reddy-add-enterprise-00" ipr="trust200902">
+  <front>
+    <title abbrev="DoH/DoT in Enterprise Networks">DNS-over-HTTPS and
+    DNS-over-TLS Server Deployment Considerations for Enterprise
+    Networks</title>
+
+    <author fullname="Tirumaleswar Reddy" initials="T." surname="Reddy">
+      <organization abbrev="McAfee">McAfee, Inc.</organization>
+
+      <address>
+        <postal>
+          <street>Embassy Golf Link Business Park</street>
+
+          <city>Bangalore</city>
+
+          <region>Karnataka</region>
+
+          <code>560071</code>
+
+          <country>India</country>
+        </postal>
+
+        <email>TirumaleswarReddy_Konda@McAfee.com</email>
+      </address>
+    </author>
+
+    <author fullname="Dan Wing" initials="D." surname="Wing">
+      <organization abbrev="Citrix">Citrix Systems, Inc.</organization>
+
+      <address>
+        <postal>
+          <street></street>
+
+          <country>USA</country>
+        </postal>
+
+        <email>dwing-ietf@fuggles.com</email>
+      </address>
+    </author>
+
+    <date />
+
+    <workgroup>ADD</workgroup>
+
+    <abstract>
+      <t>This document discusses DoH/DoT deployment considerations for
+      Enterprise networks. It particularly sketches the required steps to use
+      DNS-over-TLS (DoT) and/or DNS-over-HTTPS (DoH) server provided by the
+      Enterprise network.</t>
+
+      <t>One of the goals of the document is to assess to what extent existing
+      tools can be used to provide such service.</t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section anchor="intro" title="Introduction">
+      <t><xref target="RFC7626"></xref> discusses DNS privacy considerations
+      in both "on the wire" (Section 2.4) and "in the server" (Section 2.5)
+      contexts. In recent years there has also been an increase in available
+      "public resolvers" <xref target="RFC8499"></xref> which DNS clients may
+      use instead of the default resolvers provided by the network for a
+      variety of reasons (e.g., offer a good reachability, support an
+      encrypted transport, provide a strong privacy policy, (lack of)
+      filtering).</t>
+
+      <t>If public DNS over TLS (DoT) <xref target="RFC7858"></xref> or
+      DNS-over-HTTPS (DoH) <xref target="RFC8484"></xref> servers are used
+      instead of local DNS servers, it can adversely impact Enterprise
+      network-based security. Typically, various network security services are
+      provided by Enterprise networks to protect endpoints (e.g., laptops,
+      printers, IoT devices). The network security services may, for example,
+      prevent malware download, block known malicious URLs, enforce use of
+      strong ciphers, stop data exfiltration, etc. Further, Enterprises
+      network security services may enforce Acceptable Use Policy (AUP)
+      according to the IT and workplace policies. For example, employees are
+      not allowed to access some non-professional websites from the Enterprise
+      network. These network security services act on DNS requests originating
+      from endpoints. However, if an endpoint is configured to use public DoT
+      or DoH servers, network security services cannot act on DNS requests
+      from these endpoints without acting as a TLS proxy.</t>
+
+      <t>In order to act on DNS requests from endpoints, network security
+      services may block DoT traffic by dropping outgoing packets to
+      destination TCP port number 853. Identifying DoH traffic is far more
+      challenging than DoT traffic. Network security services may try to
+      identify the well-known DoH resolvers by their domain name, and DoH
+      traffic can be blocked by dropping outgoing packets to these domains.
+      However, DoH traffic can not be fully identified without acting as a TLS
+      proxy.</t>
+
+      <t>If a network security service blocks access to the public DoH/DoT
+      server, there are incompatibilities with the privacy profiles discussed
+      in <xref target="RFC8310"></xref>: <list style="symbols">
+          <t>If an endpoint has enabled strict privacy profile (Section 5 of
+          <xref target="RFC8310"></xref>), the endpoint cannot resolve DNS
+          names.</t>
+
+          <t>If an endpoint has enabled opportunistic privacy profile (Section
+          5 of <xref target="RFC8310"></xref>), endpoint will either fallback
+          to an encrypted connection without authenticating the DNS server
+          provided by the local network or fallback to clear text DNS, and
+          cannot exchange encrypted DNS messages. The fallback adversely
+          impacts security and privacy as internal attacks are possible in
+          Enterprise networks. For example, an internal attacker can modify
+          the DNS responses to re-direct the client to malicious servers or
+          pervasively monitor the DNS traffic. The reader may refer to Section
+          3.2.1 of <xref target="I-D.arkko-farrell-arch-model-t"></xref> for a
+          discussion on the need for more awareness about attacks from within
+          closed domains.</t>
+        </list></t>
+
+      <t>To overcome the above threats, this document specifies mechanisms to
+      configure endpoints to use Enterprise provided DoT and DoH servers, and
+      bootstrap IoT devices and unmanaged endpoints to discover and
+      authenticate the DoT and DoH servers provided by the Enterprise
+      network.</t>
+
+      <t>This document focuses on Enterprise networks, DoH/DoT sever discovery
+      considerations for home networks are discussed in <xref
+      target="I-D.btw-add-home"></xref>.</t>
+    </section>
+
+    <section anchor="notation" title="Terminology">
+      <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+      "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in BCP 14
+      <xref target="RFC2119"></xref><xref target="RFC8174"></xref> when, and
+      only when, they appear in all capitals, as shown here.</t>
+
+      <t>This document makes use of the terms defined in <xref
+      target="RFC8499"></xref> and <xref
+      target="I-D.ietf-dnsop-terminology-ter"></xref>.</t>
+
+      <t>'DoH/DoT' refers to DNS-over-HTTPS and/or DNS-over-TLS.</t>
+    </section>
+
+    <section anchor="depl" title="IT-owned devices">
+      <t>If a device is managed by an enterprise's IT department, the device
+      can be configured to use Enterprise-provided DoH/DoT servers. This
+      configuration might be manual or rely upon a device management software
+      tool deployed by the Enterprise. For example, customizing Firefox using
+      Group Policy to use the Enterprise DoH server is discussed in <xref
+      target="Firefox-Policy"></xref> for Windows and MacOS, and setting
+      Chrome policies is discussed in <xref
+      target="Chrome-Policy"></xref>.</t>
+    </section>
+
+    <section title="IoT Devices">
+      <t>Installing host agents may not be a viable option on IoT devices and
+      network-based security is an efficient means to protect such IoT
+      devices. If an IoT device is configured to use public DoT or DoH
+      servers, and if a policy enforcement point in the local network is
+      programmed using, for example, a Manufacturer Usage Description (MUD)
+      file <xref target="RFC8520"></xref> by a MUD manager to only allow
+      specific communications to and from the IoT device, the policy
+      enforcement point cannot apply the network Access Control List (ACL)
+      rules based on domain names (Section 8 of <xref
+      target="RFC8520"></xref>).</t>
+
+      <t>The following bootstrapping mechanisms can be used to securely
+      provision IoT devices to use Enterprise provided DoT and DoH
+      servers:<list style="symbols">
+          <t>IoT devices supporting Bootstrapping Remote Secure Key
+          Infrastructures (BRSKI) discussed in <xref
+          target="I-D.ietf-anima-bootstrapping-keyinfra"></xref> can be
+          bootstrapped with the Enterprise-provided DoH/DoT servers using the
+          mechanism discussed in Section 5 of <xref
+          target="I-D.reddy-dprive-bootstrap-dns-server"></xref>.</t>
+
+          <t><xref target="RFC8572"></xref> defines a bootstrapping strategy
+          for enabling devices to securely obtain the required configuration
+          information with no installer input, the onboarding information
+          defined in Section 2.2 of <xref target="RFC8572"></xref> can be
+          extended to include the local DoH/DoT server information.</t>
+
+          <t>The following discusses Wi-Fi authentication mechanisms supported
+          by IoT devices:<vspace blankLines="1" />EAP-PSK <xref
+          target="RFC4764"></xref> realizes mutual authentication and session
+          key derivation using a Pre-Shared Key (PSK). Once the authentication
+          is successful, EAP-PSK provides a protected communication
+          channel.<vspace blankLines="1" />EAP-pwd <xref
+          target="RFC8146"></xref> is another EAP method that utilizes a
+          shared password for authentication using a PAKE scheme that is
+          resistant to dictionary attacks. <vspace blankLines="1" />Not all of
+          IoT devices support 802.1x supplicant and need an alternate
+          mechanism to connect to the Enterprise network. To address this
+          limitation, unique pre-shared keys are created for each IoT device
+          and WPA-PSK is used. In other words, WPA-PSK is used with unique
+          pre-shared keys for different IoT devices to deal with security
+          issues. EAP-PSK/EAP-pwd/WPA-PSK seems to be a good choice on
+          constrained devices. <list style="symbols">
+              <t>For the above EAP methods and WPA-PSK, the IoT device needs
+              to be provisioned with a PSK for mutual authentication. The PSK
+              is only known to the IoT device and the EAP/WPA server. In this
+              case, the bootstrapping mechanism discussed in Section 4 of
+              <xref target="I-D.reddy-dprive-bootstrap-dns-server"></xref> may
+              be used to securely bootstrap IoT device with the authentication
+              domain name (ADN) and DNS server certificate of the local
+              network's DoH/ DoT server. It uses password-based authenticated
+              key exchange (PAKE) scheme to authenticate the EST server and
+              fetch the DoH/DoT server certificate.</t>
+            </list></t>
+
+          <t>If Device Provisioning Protocol (DPP) <xref target="dpp"></xref>
+          is used, the configurator can securely configure IoT devices with
+          the local DoH/DoT server using DPP.</t>
+
+          <t>The OMA LWM2M specification <xref target="oma"></xref> defines an
+          architecture where a new device (LWM2M client) contacts a
+          Bootstrap-server which can provision IoT devices with the local
+          DoH/DoT server.</t>
+
+          <t>The Open Connectivitiy Foundation <xref target="ocf"></xref>
+          defines the onboarding process. Once the onboarding tool and the new
+          device have authenticated and established secure communication, the
+          onboarding tool can provision the IoT device with the local DoH/DoT
+          server.</t>
+        </list></t>
+
+      <t>This document does not discuss opportunistic or leap-of-faith
+      bootstrapping methods, they are susceptible to security issues (e.g.,
+      IoT device can be configured with the attacker's DoH/DoT server or
+      disable the use of DoH/DoT).</t>
+    </section>
+
+    <section title="BYOD">
+      <t>The following mechanisms can be used to bootstrap BYOD (bring your
+      own device):</t>
+
+      <t><list style="symbols">
+          <t>If mobile device management (MDM) is used to secure BYOD, MDM can
+          be used to configure OS/browser with the Enterprise provided DoH/DoT
+          server.</t>
+
+          <t>If an endpoint is on-boarded, for example, using Over-The-Air
+          (OTA) enrollment to provision the device with a certificate and
+          configuration profile, the configuration profile can include the URI
+          of the DoH server and authentication domain name (ADN) of the DoT
+          server. The OS/Browser can use the configuration profile to use the
+          Enterprise provided DoH/DoT server. In this case, MDM is not
+          installed on the device.</t>
+
+          <t>If an endpoint uses the credentials (username and password)
+          provided by the IT admin to mutually authenticate to the Enterprise
+          WiFi Access Point, the boostrapping mechanism discussed in Section 4
+          of <xref target="I-D.reddy-dprive-bootstrap-dns-server"></xref> can
+          be used to securely bootstrap the endpoint with the ADN and DNS
+          server certificate of the local network's DoH/DoT server. <vspace
+          blankLines="1" />The DNS client uses PAKE scheme to authenticate the
+          EST server using the credentials to authenticate to the network. In
+          this case, the endpoint is neither provisioned with a configuration
+          profile or MDM is installed on the device. Many users have privacy
+          and personal data sovereignty concerns with employers installing MDM
+          on their personal devices; they are concerned that admin can glean
+          personal information and could control how they use their devices.
+          Yet when users do not install MDM on their devices, IT admins do not
+          get visibility into the security posture of those devices.<vspace
+          blankLines="1" />To overcome this problem, a host agent can
+          cryptographically attest the security status associated with device,
+          such as minimum passcode length, biometric login enabled, OS version
+          etc. This approach is fast gaining traction especially with the
+          advent of closed OS like <xref target="win10s">Windows 10 in S
+          mode</xref> or <xref target="Chromebook">Chromebook</xref>, where
+          applications are sandboxed (e.g., ransomware attack is not possbile)
+          and applications can only be installed via the OS store.</t>
+        </list></t>
+    </section>
+
+    <section anchor="Security" title="Security Considerations">
+      <t>The mechanism defined in <xref
+      target="I-D.reddy-dprive-dprive-privacy-policy"></xref> can be used by
+      the DNS server to communicate its privacy statement URL and filtering
+      policy to a DNS client. This communication is cryptographically signed
+      to attest to its authenticity.</t>
+
+      <t>The DNS client can validate the signatory (i.e., cryptographically
+      attested by the Organization hosting the DoH/DoT server) and the user
+      can review human-readable privacy policy information of the DNS server
+      and assess whether the DNS server performs DNS-based content
+      filtering.</t>
+
+      <t>If the discovered DoH/DoT server does not meet the privacy preserving
+      data policy and filtering requirements of the user, the user can
+      instruct the DNS client to take appropriate actions. For example, the
+      action can be to use the local DNS server only to access internal-only
+      DNS names and use another DNS server (adhering with his/her
+      expectations) for public domains.</t>
+    </section>
+
+    <section anchor="IANA" title="IANA Considerations">
+      <t>This document has no actions for IANA.</t>
+    </section>
+
+    <section title="Acknowledgements">
+      <t>Thanks to Mohamed Boucadair for the discussion and comments.</t>
+    </section>
+  </middle>
+
+  <!--  *****BACK MATTER ***** -->
+
+  <back>
+    <references title="Normative References">
+      <?rfc include='reference.RFC.2119'?>
+
+      <?rfc include='reference.RFC.8174'?>
+
+      <?rfc include='reference.RFC.8484'?>
+
+      <?rfc include='reference.RFC.7858'?>
+
+      <?rfc include='reference.RFC.8310'?>
+
+      <?rfc include='reference.I-D.reddy-dprive-bootstrap-dns-server'?>
+    </references>
+
+    <references title="Informative References">
+      <?rfc include='reference.RFC.8499'?>
+
+      <?rfc include='reference.I-D.ietf-anima-bootstrapping-keyinfra'?>
+
+      <?rfc include='reference.RFC.8520'?>
+
+      <?rfc include='reference.RFC.4764'?>
+
+      <?rfc include='reference.RFC.8146'?>
+
+      <?rfc include='reference.RFC.7626' ?>
+
+      <?rfc include='reference.RFC.8572' ?>
+
+      <?rfc include='reference.I-D.btw-add-home'?>
+
+      <?rfc include='reference.I-D.reddy-dprive-dprive-privacy-policy'?>
+
+      <?rfc include='reference.I-D.ietf-dnsop-terminology-ter'?>
+
+      <?rfc include='reference.I-D.arkko-farrell-arch-model-t'
+?>
+
+      <reference anchor="Firefox-Policy"
+                 target="ttps://github.com/mozilla/policy-templates/blob/master/README.md#dnsoverhttps">
+        <front>
+          <title>Policy templates for Firefox</title>
+
+          <author></author>
+
+          <date day="" month="" year="" />
+        </front>
+      </reference>
+
+      <reference anchor="dpp"
+                 target="https://www.wi-fi.org/download.php?file=/sites/default/files/private/Device_Provisioning_Protocol_Specification_v1.1_1.pdf">
+        <front>
+          <title>Wi-Fi Device Provisioning Protocol (DPP)</title>
+
+          <author fullname="" surname="Specifictaion version 1.1">
+            <organization>Wi-Fi Alliance</organization>
+          </author>
+
+          <date month="" year="2018" />
+        </front>
+
+        <seriesInfo name="Wi-Fi Alliance" value="" />
+      </reference>
+
+      <reference anchor="oma"
+                 target="http://www.openmobilealliance.org/release/LightweightM2M/V1_1_1-20190617-A/OMA-TS-LightweightM2M_Core-V1_1_1-20190617-A.pdf">
+        <front>
+          <title>Lightweight Machine to Machine Technical Specification:
+          Core</title>
+
+          <author fullname="" surname="Approved Version: 1.1.1 - 2019 06 17">
+            <organization>Open Mobile Alliance</organization>
+          </author>
+
+          <date month="June" year="2019" />
+        </front>
+
+        <seriesInfo name="Open Mobile Alliance" value="" />
+      </reference>
+
+      <reference anchor="ocf"
+                 target="https://openconnectivity.org/specs/OCF_Security_Specification_v1.0.0.pdf">
+        <front>
+          <title>OCF Security Specification</title>
+
+          <author fullname="" surname="Version: 1.0.0">
+            <organization>Open Connectivity Foundation</organization>
+          </author>
+
+          <date month="June" year="2017" />
+        </front>
+
+        <seriesInfo name="Open Connectivitiy Foundation" value="" />
+      </reference>
+
+      <reference anchor="Chrome-Policy"
+                 target="https://support.google.com/chrome/a/answer/2657289?hl=en">
+        <front>
+          <title>Chrome policies for users or browsers</title>
+
+          <author>
+            <organization>The Unicode Consortium</organization>
+          </author>
+
+          <date day="" month="" year="" />
+        </front>
+      </reference>
+
+      <reference anchor="win10s"
+                 target="https://www.microsoft.com/en-us/windows/s-mode">
+        <front>
+          <title>Windows 10 in S mode</title>
+
+          <author>
+            <organization>Microsoft</organization>
+          </author>
+
+          <date day="" month="" year="" />
+        </front>
+      </reference>
+
+      <reference anchor="Chromebook"
+                 target="https://support.google.com/chromebook/answer/3438631?hl=en">
+        <front>
+          <title>Chromebook security</title>
+
+          <author>
+            <organization>Microsoft</organization>
+          </author>
+
+          <date day="" month="" year="" />
+        </front>
+      </reference>
+
+      <!---->
+    </references>
+  </back>
+</rfc>
