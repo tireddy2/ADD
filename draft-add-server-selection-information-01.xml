@@ -100,7 +100,7 @@
       and filtering policy.</t>
 
       <t>This assertion is useful for DNS-over-TLS and DNS-over-HTTPS servers
-      that are either public resolvers or are discovered on a local
+      that are either public resolvers or are discovered in a local
       network.</t>
     </abstract>
   </front>
@@ -110,15 +110,14 @@
       <t><xref target="RFC7626"></xref> discusses DNS privacy considerations
       in both "on the wire" (Section 2.4 of <xref target="RFC7626"></xref>)
       and "in the server" (Section 2.5 of <xref target="RFC7626"></xref>)
-      contexts. Two protocols that provide ways to increase DNS privacy
-      between DNS clients and servers are DNS-over-HTTPS (DoH) <xref
+      contexts. Two protocols that provide encrypted channels between DNS clients and servers are DNS-over-HTTPS (DoH) <xref
       target="RFC8484"></xref> and DNS-over-TLS (DoT) <xref
       target="RFC7858"></xref>. </t>
 
       <t>DNS clients can discover and authenticate DoH and DoT servers
-      provided by a local network, for example using the technique proposed in
+      provided by a local network, for example using the techniques proposed in
       <xref target="I-D.btw-add-home"></xref>. If the mechanism used to
-      discovered the DoH/DoT server is insecure, the DNS client needs evidence
+      discover the DoH/DoT server is insecure, the DNS client needs evidence
       about the DoH/DoT server to assess its trustworthiness and a way to
       appraise such evidence. The mechanism specified in this document can be
       used by the DNS client to cryptographically identify it is connecting to
@@ -133,7 +132,9 @@
       challenge is the user has to search to find the URL that points to the
       human readable privacy policy information of the DNS server. Also, a
       user does not know if a DNS server (public or local) performs DNS-based
-      content filtering. This document simplifies the user experience by
+      content filtering. </t> 
+      
+         <t> This document simplifies the user experience by
       supporting a mechanism to retrieve the DNS server policy permitting the
       user to review human-readable privacy policy information of the DNS
       server and to assess whether that DNS server performs DNS-based content
@@ -153,7 +154,7 @@
           implements QNAME minimisation <xref target="RFC7816"></xref>.</t>
         </list></t>
 
-      <t>The cryptographically signed policy allows a DNS client to connect to
+      <t>The cryptographically signed policy allows a DNS client to, e.g., connect to
       multiple DNS servers and prompt the user to review the DNS privacy
       statements to select the DNS server that adheres to the privacy
       preserving data policy and DNS filtering expectations of the user. How a
@@ -166,7 +167,7 @@
 
     <section anchor="scope" title="Sample Use Cases ">
       <t>The mechanism for a DNS server to communicate its cryptographically
-      signed policies to a DNS client contributes to solve the following
+      signed policies to DNS clients contributes to solve the following
       problems in various deployments:<list style="symbols">
           <t>The DoH/DoT server advertised using DHCP/RA in Home and Mobile
           networks is insecure, the mechanism specified in this document can
@@ -378,10 +379,10 @@
           server to the DNS client and ensures the DNS client does not use
           outdated policy information. If the DNS client knows the PAT object
           has expired, it should make another request to get the new PAT
-          object from the DNS server. For example, the client can compute hash
+          object from the DNS server. For example, the client can compute a hash
           of the resolver information, retreive the information after the
-          expiration time, computes hash of the newly retrieved resolver
-          information and compares with the previous hash to detect policy
+          expiration time, computes the hash of the newly retrieved resolver
+          information, and compares with the old hash to detect policy
           updates. A quality implementation can perform automatic analysis and
           avoid presenting this information to the user if the DNS server's
           policies have not changed. </t>
@@ -634,10 +635,10 @@
       DoH/DoT server in the local network. Secure Zero Touch Provisioning
       <xref target="RFC8572"></xref> defines a bootstrapping strategy for
       enabling devices to securely obtain the required configuration
-      information with no installer input. If the DoH/DoT information is
-      insecurely discovered and not pre-configured in the IoT device, the
+      information with no user input. If the DoH/DoT information is
+      insecurely discovered and not pre-configured in the networking device, the
       client can validate the Policy Assertion Token signature using the owner
-      certificate (Section 3.2 of <xref target="RFC8572"></xref>).</t>
+      certificate as per Section 3.2 of <xref target="RFC8572"></xref>.</t>
     </section>
 
     <section anchor="Security" title="Security Considerations">
