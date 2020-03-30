@@ -1,0 +1,1098 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+<?rfc toc="yes"?>
+<?rfc tocompact="yes"?>
+<?rfc tocdepth="3"?>
+<?rfc tocindent="yes"?>
+<?rfc symrefs="yes"?>
+<?rfc sortrefs="yes"?>
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
+<?rfc compact="yes"?>
+<?rfc subcompact="no"?>
+<rfc category="std" docName="draft-reddy-add-server-policy-selection-01"
+     ipr="trust200902">
+  <front>
+    <title abbrev="DNS Server Info with Assertion Token">DNS Server Selection:
+    DNS Server Information with Assertion Token</title>
+
+    <author fullname="Tirumaleswar Reddy" initials="T." surname="Reddy">
+      <organization abbrev="McAfee">McAfee, Inc.</organization>
+
+      <address>
+        <postal>
+          <street>Embassy Golf Link Business Park</street>
+
+          <city>Bangalore</city>
+
+          <region>Karnataka</region>
+
+          <code>560071</code>
+
+          <country>India</country>
+        </postal>
+
+        <email>kondtir@gmail.com</email>
+      </address>
+    </author>
+
+    <author fullname="Dan Wing" initials="D." surname="Wing">
+      <organization abbrev="Citrix">Citrix Systems, Inc.</organization>
+
+      <address>
+        <postal>
+          <street></street>
+
+          <country>USA</country>
+        </postal>
+
+        <email>dwing-ietf@fuggles.com</email>
+      </address>
+    </author>
+
+    <author fullname="Michael C. Richardson" initials="M."
+            surname="Richardson">
+      <organization>Sandelman Software Works</organization>
+
+      <address>
+        <postal>
+          <street></street>
+
+          <country>USA</country>
+        </postal>
+
+        <email>mcr+ietf@sandelman.ca</email>
+      </address>
+    </author>
+
+    <author fullname="Mohamed Boucadair" initials="M." surname="Boucadair">
+      <organization>Orange</organization>
+
+      <address>
+        <postal>
+          <street></street>
+
+          <city>Rennes</city>
+
+          <code>35000</code>
+
+          <country>France</country>
+        </postal>
+
+        <email>mohamed.boucadair@orange.com</email>
+      </address>
+    </author>
+
+    <date />
+
+    <workgroup>ADD WG</workgroup>
+
+    <abstract>
+      <t>The document defines a mechanism that allows communication of DNS
+      resolver information to DNS clients for use in selection decisions. In
+      particular, the document defines a mechanism for a DNS server to
+      communicate its filtering policy and privacy statement URL to DNS
+      clients. This information is cryptographically signed to attest its
+      authenticity. Such information is used for the selection of DNS
+      resolvers. Typically, evaluating the DNS privacy statement, filtering
+      policy, and the signatory, DNS clients with minimum human intervention
+      can select the DNS server that best supports the user's desired privacy
+      and filtering policy.</t>
+
+      <t>This assertion is useful for DNS-over-TLS and DNS-over-HTTPS servers
+      that are either public resolvers or are discovered on a local
+      network.</t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section anchor="intro" title="Introduction">
+      <t><xref target="RFC7626"></xref> discusses DNS privacy considerations
+      in both "on the wire" (Section 2.4 of <xref target="RFC7626"></xref>)
+      and "in the server" (Section 2.5 of <xref target="RFC7626"></xref>)
+      contexts. Two protocols that provide ways to increase DNS privacy
+      between DNS clients and servers are DNS-over-HTTPS (DoH) <xref
+      target="RFC8484"></xref> and DNS-over-TLS (DoT) <xref
+      target="RFC7858"></xref>. </t>
+
+      <t>DNS clients can discover and authenticate DoH and DoT servers
+      provided by a local network, for example using the technique proposed in
+      <xref target="I-D.btw-add-home"></xref>. If the mechanism used to
+      discovered the DoH/DoT server is insecure, the DNS client needs evidence
+      about the DoH/DoT server to assess its trustworthiness and a way to
+      appraise such evidence. The mechanism specified in this document can be
+      used by the DNS client to cryptographically identify it is connecting to
+      a DoT/DoH server hosted by a specific organization (e.g., ISP or
+      Enterprise). </t>
+
+      <t>The DNS Recursive Operator Privacy (DROP) statement explained in
+      <xref target="I-D.ietf-dprive-bcp-op"></xref> outlines the recommended
+      contents a DNS operator should publish, thereby providing a means for
+      users to evaluate the privacy properties of a given DNS service. While a
+      human can review the privacy statement of a DNS server operator, the
+      challenge is the user has to search to find the URL that points to the
+      human readable privacy policy information of the DNS server. Also, a
+      user does not know if a DNS server (public or local) performs DNS-based
+      content filtering. This document simplifies the user experience by
+      supporting a mechanism to retrieve the DNS server policy permitting the
+      user to review human-readable privacy policy information of the DNS
+      server and to assess whether that DNS server performs DNS-based content
+      filtering. </t>
+
+      <t>This document also defines a mechanism for DNS clients to gather a
+      set of information related to discovered (or pre-configured) servers and
+      use that information to fed a DNS server selection procedure. The
+      following parameters are supported in this version:<list style="hanging">
+          <t hangText="Malware blocking:">Indicates whether the DNS server
+          offers malware blocking service.</t>
+
+          <t hangText="Policy blocking:">Indicates whether the DNS server
+          maintains a block-list (e.g., imposed by regulation).</t>
+
+          <t hangText="QNAME minimization:">Indicates whether the DNS server
+          implements QNAME minimisation <xref target="RFC7816"></xref>.</t>
+        </list></t>
+
+      <t>The cryptographically signed policy allows a DNS client to connect to
+      multiple DNS servers and prompt the user to review the DNS privacy
+      statements to select the DNS server that adheres to the privacy
+      preserving data policy and DNS filtering expectations of the user. How a
+      user instructs a DNS client about his/her preferences and how/whether
+      the DNS client prompts a user are out of scope.</t>
+
+      <t>Note that the proposed mechanism can also be used by DNS clients to
+      cryptographically validate the Do53 resolver information.</t>
+    </section>
+
+    <section anchor="scope" title="Sample Use Cases ">
+      <t>The mechanism for a DNS server to communicate its cryptographically
+      signed policies to a DNS client contributes to solve the following
+      problems in various deployments:<list style="symbols">
+          <t>The DoH/DoT server advertised using DHCP/RA in Home and Mobile
+          networks is insecure, the mechanism specified in this document can
+          be used by the DNS client to validate the signatory (e.g.,
+          cryptographically attested by the ISP).</t>
+
+          <t>Typically Enterprise networks do not assume that all devices in
+          their network are managed by the IT team or Mobile Device Management
+          (MDM) devices, especially in the quite common BYOD (Bring Your Own
+          Device) scenario. The mechanism specified in this document can be
+          used by users of the BYOD devices to determine if the DNS server on
+          the local network complies with their user's privacy policy and DNS
+          filtering expectations.</t>
+
+          <t>The user selects specific well-known networks (e.g., organization
+          for which a user works or a user works temporarily within another
+          corporation) to learn the privacy policy statement and filtering
+          policy of the local DNS server. If the discovered DoH/DoT server
+          does not meet the privacy preserving data policy and filtering
+          requirements of the user, the DNS client can take appropriate
+          actions. For example, the action can be to use the discovered DNS
+          server only to access internal-only DNS names and use another DNS
+          server (adhering with the user's expectations) for public
+          domains.</t>
+
+          <t>The policy information signals the presence of DNS-based content
+          filtering in the attached network. If the network is well-known to
+          the DNS client and the local DNS server meets the privacy
+          requirements of the user, the DNS client can continue to use
+          encrypted connection with the local DoH/DoT server. If the error
+          code returned by the DNS server indicates access to the domain is
+          blocked because of internal security policy <xref
+          target="I-D.ietf-dnsop-extended-error"></xref>, the DNS client can
+          securely identify access to the domain is censored by the
+          network.</t>
+
+          <t>The signed policy contains an URL that points to a human-readable
+          privacy policy information of the DNS server for the user to review
+          and can make an informed decision whether the DNS server is
+          trustworthy to honor the privacy of the user. The DNS Push
+          Notifications mechanism defined in <xref
+          target="I-D.ietf-dnssd-push"></xref> can be used by the DNS client
+          to be asynchronously notified when the policy change occurs. The
+          client automatically learns updates to the policy of the DNS server,
+          and whenever the privacy statement of the DNS server changes, the
+          client can notify the user to re-evaluate the updated privacy
+          statement. As a reminder, DNS Push Notification is only defined for
+          TLS over TCP. DNS client implementations that do not support DNS
+          Push Notifications can use the mechanism discussed in <xref
+          target="exp-header-parameter"></xref> to identify policy
+          updates.</t>
+        </list></t>
+    </section>
+
+    <section anchor="notation" title="Terminology">
+      <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+      "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in BCP 14
+      <xref target="RFC2119"></xref><xref target="RFC8174"></xref> when, and
+      only when, they appear in all capitals, as shown here.</t>
+
+      <t>This document makes use of the terms defined in <xref
+      target="RFC8499"></xref> and <xref
+      target="I-D.ietf-dnsop-terminology-ter"></xref>.</t>
+
+      <t>'DoH/DoT' refers to DNS-over-HTTPS and/or DNS-over-TLS.</t>
+    </section>
+
+    <section anchor="PAT" title="Policy Assertion Token (PAT): Overview">
+      <t>JSON Web Token (JWT) <xref target="RFC7519"></xref> and JSON Web
+      Signature (JWS) <xref target="RFC7515"></xref> and related
+      specifications define a standard token format that can be used as a way
+      of encapsulating claimed or asserted information with an associated
+      digital signature using X.509 based certificates. JWT provides a set of
+      claims in JSON format that can accommodate asserted policy information
+      of the DoH/DoT server. Additionally, JWS provides a path for updating
+      methods and cryptographic algorithms used for the associated digital
+      signatures.</t>
+
+      <t>JWS defines the use of JSON data structures in a specified canonical
+      format for signing data corresponding to JOSE header, JWS Payload, and
+      JWS Signature. The next sections define the header and claims that MUST
+      be minimally used with JWT and JWS for privacy assertion token.</t>
+
+      <t>The Policy Assertion Token (PAT) specifically uses this token format
+      and defines claims that convey the policy information of DoH/DoT server.
+      The client can retrieve the PAT object using the method discussed in
+      <xref target="I-D.ietf-dnsop-resolver-information"></xref>. The
+      signature of PAT object can be validated by the DNS client. If the
+      signer and the contents of the PAT object comply with the user's
+      requirements, the user's client software can use that DNS server.</t>
+
+      <t>The PAT object is signed by the DNS server's domain that is
+      authoritative to assert the DNS server policy information. This
+      authority is represented by the certificate credentials and the
+      signature.</t>
+
+      <t>For example, the PAT object could be created by the organization
+      hosting the DoH/DoT server and optionally by a third party who performed
+      privacy and security audit of the DoH/DoT server. The DNS client needs
+      to have the capability to verify the digital signature and to parse the
+      PAT object.</t>
+    </section>
+
+    <section anchor="pat_header" title="PAT Header">
+      <t>The JWS token header is a JOSE header (Section 4 of <xref
+      target="RFC7515"></xref>) that defines the type and encryption algorithm
+      used in the token.</t>
+
+      <t>PAT header MUST include, at a minimum, the header parameters defined
+      in Sections <xref format="counter"
+      target="typ-type-header-parameter"></xref>, <xref format="counter"
+      target="alg-algorithm-header-parameter"></xref>, and <xref
+      format="counter" target="x5u-x509-url-header-parameter"></xref>.</t>
+
+      <section anchor="typ-type-header-parameter"
+               title="'typ' (Type) Header Parameter">
+        <t>The 'typ' (Type) Header Parameter is defined Section 4.1.9 of <xref
+        target="RFC7515"></xref> to declare the media type of the complete
+        JWS.</t>
+
+        <t>For PAT Token the 'typ' header MUST be the string 'pat'. This
+        represents that the encoded token is a JWT of type pat.</t>
+      </section>
+
+      <section anchor="alg-algorithm-header-parameter"
+               title="'alg' (Algorithm) Header Parameter">
+        <t>The 'alg' (Algorithm) Header Parameter is defined in Section 4.1.1
+        of <xref target="RFC7515"></xref>. It specifies the JWS signature
+        cryptographic algorithm. It also refers to a list of defined 'alg'
+        values as part of a registry established by JSON Web Algorithms (JWA)
+        <xref target="RFC7518"></xref> Section 3.1.</t>
+
+        <t>For the creation and verification of PAT tokens and their digital
+        signatures, implementations MUST support ES256 as defined in Section
+        3.4 of <xref target="RFC7518"></xref>. Implementations MAY support
+        other algorithms registered in the JSON Web Signature and Encryption
+        Algorithms registry created by <xref target="RFC7518"></xref>. The
+        content of that registry may be updated in the future depending on
+        cryptographic strength requirements guided by current security best
+        practice. The mandatory-to-support algorithm for PAT tokens may
+        likewise be updated in the future.</t>
+
+        <t>Implementations of PAT digital signatures using ES256 as defined
+        above SHOULD use deterministic ECDSA when supported for the reasons
+        stated in <xref target="RFC6979"></xref>.</t>
+      </section>
+
+      <section anchor="x5u-x509-url-header-parameter"
+               title="'x5u' (X.509 URL) Header Parameter">
+        <t>As defined in Section 4.1.5 of <xref target="RFC7515"></xref>, the
+        'x5u' header parameter defines a URI <xref target="RFC3986"></xref>
+        referring to the resource for the X.509 public key certificate or
+        certificate chain <xref target="RFC5280"></xref> corresponding to the
+        key used to digitally sign the JWS. Generally, as defined in Section
+        4.1.5 of <xref target="RFC7515"></xref> this corresponds to an HTTPS
+        or DNSSEC resource using integrity protection.</t>
+      </section>
+
+      <section anchor="example-pat-header" title="An Example of PAT Header">
+        <t>An example of the PAT header is shown in <xref target="ex"></xref>.
+        It includes the specified PAT type, ES256 algorithm, and an URI
+        referencing the network location of the certificate needed to validate
+        the PAT signature.</t>
+
+        <figure align="center" anchor="ex" title="A PAT Header Example">
+          <artwork><![CDATA[{
+  "typ":"pat",
+  "alg":"ES256",
+  "x5u":"https://cert.example.com/pat.cer"
+}
+]]></artwork>
+        </figure>
+      </section>
+    </section>
+
+    <section anchor="pat_payload" title="PAT Payload">
+      <t>The token claims consists of the policy information of the DNS server
+      which needs to be verified at the DNS client. These claims follow the
+      definition of a JWT claim (Secion 4 of <xref target="RFC7519"></xref>)
+      and are encoded as defined by the JWS Payload (Section 3 of <xref
+      target="RFC7515"></xref>).</t>
+
+      <t>PAT defines the use of a standard JWT-defined claim as well as custom
+      claims corresponding to the DoT or DoH servers.</t>
+
+      <t>Claim names MUST use the US-ASCII character set. Claim values MAY
+      contain characters that are outside the ASCII range, however they MUST
+      follow the default JSON serialization defined in Section 7 of <xref
+      target="RFC7519"></xref>.</t>
+
+      <section anchor="jwt-defined-claims" title="JWT Defined Claims">
+        <section anchor="iat-issued-at-claim" title="'iat' - Issued At Claim">
+          <t>The JSON claim MUST include the 'iat' (Section 4.1.6 of <xref
+          target="RFC7519"></xref>) defined claim "Issued At". The 'iat'
+          should be set to the date and time of issuance of the JWT. The time
+          value should be of the format (NumericDate) defined in Section 2 of
+          <xref target="RFC7519"></xref>.</t>
+        </section>
+
+        <section anchor="exp-header-parameter"
+                 title="'exp' - Expiration Time Claim">
+          <t>The JSON claim MUST include the 'exp' (Section 4.1.4 of <xref
+          target="RFC7519"></xref>) defined "claim Expiration Time". The 'exp'
+          should be set to specify the expiration time on or after which the
+          JWT is not accepted for processing. The PAT object should expire
+          after a reasonable duration. A short expiration time for the PAT
+          object periodically reaffirms the policy information of the DNS
+          server to the DNS client and ensures the DNS client does not use
+          outdated policy information. If the DNS client knows the PAT object
+          has expired, it should make another request to get the new PAT
+          object from the DNS server. For example, the client can compute hash
+          of the resolver information, retreive the information after the
+          expiration time, computes hash of the newly retrieved resolver
+          information and compares with the previous hash to detect policy
+          updates. A quality implementation can perform automatic analysis and
+          avoid presenting this information to the user if the DNS server's
+          policies have not changed. </t>
+        </section>
+      </section>
+
+      <section anchor="pat_claims" title="PAT Specific Claims">
+        <section anchor="server-identity" title="DNS Server Identity Claims">
+          <t>The DNS server identity is represented by a claim that is
+          required for PAT: the 'server' claim. The 'server' MUST contain
+          claim values that are identity claim JSON objects where the child
+          claim name represents an identity type and the claim value is the
+          identity string, both defined in subsequent subsections.</t>
+
+          <t>These identities can be represented as either authentication
+          domain name (ADN) (defined in <xref target="RFC8310"></xref>) or
+          Uniform Resource Indicators (URI).</t>
+
+          <section anchor="adn"
+                   title="'adn' - Authentication Domain Name Identity">
+            <t>If the DNS server identity is an ADN, the claim name
+            representing the identity MUST be 'adn'. The claim value for the
+            'adn' claim is the ADN.</t>
+          </section>
+
+          <section anchor="uri-identity" title="'uri' - URI Identity">
+            <t>If the DNS server identity is of the form URI, as defined in
+            <xref target="RFC3986"></xref>, the claim name representing the
+            identity MUST be 'uri' and the claim value is the URI form of the
+            DNS server identity.</t>
+
+            <t>As a reminder, if DoH is supported by the DNS server, the DNS
+            client uses the https URI scheme (Section 3 of <xref
+            target="RFC8484"></xref>).</t>
+          </section>
+        </section>
+
+        <section anchor="policyinfo"
+                 title="'policyinfo' (Policy Information) Claim">
+          <t>The 'policyinfo' claim MUST be formatted as a JSON object. The
+          'policyinfo' claim contains the policy information of the DNS
+          server, it includes the following attributes:</t>
+
+          <t><list style="hanging">
+              <t hangText="filtering:">If the DNS server changes some of the
+              answers that it returns based on policy criteria, such as to
+              prevent access to malware sites or objectionable content. This
+              optional attribute has the following structure:<list
+                  style="hanging">
+                  <t hangText="malwareblocking:">The DNS server offers malware
+                  blocking service. If access to domains is blocked on threat
+                  data, the parameter value is set to 'true'.</t>
+
+                  <t hangText="policyblocking:">If access to domains is
+                  blocked on a blacklist or objectionable content, the
+                  parameter value is set to 'true'.</t>
+                </list></t>
+
+              <t hangText="qnameminimization:">If the DNS server implements
+              QNAME minimisation <xref target="RFC7816"></xref> to improve DNS
+              privacy. If the parameter value is set to 'true', QNAME
+              minimisation is supported by the DNS server. This is a mandatory
+              attribute.</t>
+
+              <t hangText="privacyurl:">A URL that points to the privacy
+              policy information of the DNS server. This is a mandatory
+              attribute.</t>
+
+              <t hangText="auditurl:">A URL that points to the security
+              assessment report of the DNS server by a third party auditor.
+              This is an optional attribute.</t>
+            </list></t>
+        </section>
+
+        <section anchor="pat_payload_example" title="Example">
+          <t><xref target="poex"></xref> shows an example of policy
+          information.</t>
+
+          <figure anchor="poex" title="An Example of Policy Information">
+            <artwork><![CDATA[{
+  "server":{
+      "adn":["example.com"]
+  },
+  "iat":1443208345,
+  "exp":1443640345,
+  "policyinfo": {
+     "filtering": {
+         "malwareblocking": true,
+         "policyblocking": false
+     },
+     "qnameminimization":false,
+     "privacyurl": "https://example.com/commitment-to-privacy/"
+  } 
+}
+]]></artwork>
+          </figure>
+        </section>
+      </section>
+    </section>
+
+    <section anchor="pat_signature" title="PAT Signature">
+      <t>The signature of the PAT is created as specified in Section 5.1 of
+      <xref target="RFC7515"></xref> (Steps 1 through 6). PAT MUST use the JWS
+      Protected Header.</t>
+
+      <t>For the JWS Payload and the JWS Protected Header, the lexicographic
+      ordering and white space rules described in <xref
+      target="pat_header"></xref> and <xref target="pat_payload"></xref>, and
+      JSON serialization rules in <xref target="json_serialization"></xref>
+      MUST be followed.</t>
+
+      <t>The PAT is cryptographically signed by the domain hosting the DNS
+      server and optionally by a third party who performed privacy and
+      security audit of the DNS server.</t>
+
+      <t>The policy information is attested using "Organization Validation"
+      (OV) or "Extended Validation" (EV) certificates to avoid bad actors
+      taking advantage of this mechanism to advertise DoH/DoT servers for
+      illegitimate and fraudulent purposes meant to trick DNS clients into
+      believing that they are using a legitimate DoH/DoT server hosted to
+      provide privacy for DNS transactions.</t>
+
+      <t>Alternatively, a DNS client has to be configured to trust the leaf of
+      the signer of the PAT object. That is, trust of the signer MUST NOT be
+      determined by validating the signer via the OS or the browser trust
+      chain because that would allow any arbitrary entity to operate a DNS
+      server and assert any sort of policy.</t>
+
+      <t><xref
+      target="example-es256-based-pat-jws-serialization-and-signature"></xref>
+      provides an example of how to follow the steps to create the JWS
+      Signature.</t>
+
+      <t>JWS JSON serialization (Step 7 in Section 5.1 of <xref
+      target="RFC7515"></xref>) is supported for PAT to enable multiple
+      signatures to be applied to the PAT object. For example, the PAT object
+      can be cryptographically signed by the domain hosting the DNS server and
+      by a third party who performed privacy and security audit of the DNS
+      server.</t>
+
+      <t><xref
+      target="example-es256-based-pat-jws-serialization-and-signatures"></xref>
+      includes an example of the full JWS JSON serialization representation
+      with multiple signatures.</t>
+
+      <t>Section 5.1 of <xref target="RFC7515"></xref> (Step 8) describes the
+      method to create the final JWS Compact Serialization form of the PAT
+      Token.</t>
+    </section>
+
+    <section anchor="extending_pat" title="Extending PAT">
+      <t>PAT includes the minimum set of claims needed to securely assert the
+      policy information of the DNS server. JWT supports a mechanism to add
+      additional asserted or signed information by simply adding new claims.
+      PAT can be extended beyond the defined base set of claims to represent
+      other DNS server information requiring assertion or validation.
+      Specifying new claims follows the baseline JWT procedures (<xref
+      target="RFC7519">Section 10.1 of </xref>). Understanding new claims on
+      the DNS client is optional. The creator of a PAT object cannot assume
+      that the DNS client will understand the new claims.</t>
+    </section>
+
+    <section anchor="json_serialization"
+             title="Deterministic JSON Serialization">
+      <t>JSON objects can include spaces and line breaks, and key value pairs
+      can occur in any order. It is therefore a non-deterministic string
+      format. In order to make the digital signature verification work
+      deterministically, the JSON representation of the JWS Protected Header
+      object and JWS Payload object MUST be computed as follows.</t>
+
+      <t>The JSON object MUST follow the following rules. These rules are
+      based on the thumbprint of a JSON Web Key (JWK) as defined in Section 3
+      of <xref target="RFC7638"></xref> (Step 1).</t>
+
+      <t><list style="numbers">
+          <t>The JSON object MUST contain no whitespace or line breaks before
+          or after any syntactic elements.</t>
+
+          <t>JSON objects MUST have the keys ordered lexicographically by the
+          Unicode <xref target="UNICODE"></xref> code points of the member
+          names.</t>
+
+          <t>JSON value literals MUST be lowercase.</t>
+
+          <t>JSON numbers are to be encoded as integers unless the field is
+          defined to be encoded otherwise.</t>
+
+          <t>Encoding rules MUST be applied recursively to member values and
+          array values.</t>
+        </list></t>
+
+      <section anchor="example-pat-deterministic-json-form"
+               title="Example PAT Deterministic JSON Form">
+        <t>This section demonstrates the deterministic JSON serialization for
+        the example PAT Payload shown in <xref
+        target="pat_payload_example"></xref>.</t>
+
+        <t>The initial JSON object is shown in <xref
+        target="initial"></xref>.</t>
+
+        <figure anchor="initial" title="Initial JSON Object">
+          <artwork><![CDATA[{
+  "server":{
+      "adn":["example.com"]
+  },
+  "iat":1443208345,
+  "exp":1443640345,
+  "policyinfo": {
+     "qnameminimization":false,
+     "privacyurl": "https://example.com/commitment-to-privacy/"
+  } 
+}
+]]></artwork>
+        </figure>
+
+        <t>The parent members of the JSON object are as follows, in
+        lexicographic order: "exp", "iat", "policyinfo", "server".</t>
+
+        <t>The final constructed deterministic JSON serialization
+        representation, with whitespace and line breaks removed, (with line
+        breaks used for display purposes only) is:</t>
+
+        <figure anchor="final" title="Deterministic JSON Form">
+          <artwork><![CDATA[{"exp":1443640345,"iat":1443208345,
+"policyinfo":{"privacyurl":"https://example.com/commitment-to-privacy/",
+"qnameminimization":false},"server":{"adn":["example.com"]}}
+]]></artwork>
+        </figure>
+      </section>
+    </section>
+
+    <section anchor="privacy" title="Privacy Considerations">
+      <t>Users are expected to indicate to their system in some way that they
+      trust certain PAT signers (e.g., if working for Example, Inc., the
+      user's system is configured to trust "example.com" signing the PAT). By
+      doing so, the DNS client can automatically discover DoH/DoT server in
+      specific networks, validate the PAT signature and the user can check if
+      the human readable privacy policy information of the DNS server complies
+      with user's privacy needs, prior to using that DoH/DoT server for DNS
+      queries. </t>
+
+      <t>The DNS client MUST retrieve the human-readable privacy statement
+      from the 'privacyurl' attribute to assist with that decision (e.g.,
+      display the privacy statement when it changes, show differences in
+      previously-retrieved version, etc.). With the steps above, user can
+      review the human-readable privacy policy information of the DoH/DoT
+      server.</t>
+
+      <t>Another scenario is bootstrapping a networking device to use the
+      DoH/DoT server in the local network. Secure Zero Touch Provisioning
+      <xref target="RFC8572"></xref> defines a bootstrapping strategy for
+      enabling devices to securely obtain the required configuration
+      information with no installer input. If the DoH/DoT information is
+      insecurely discovered and not pre-configured in the IoT device, the
+      client can validate the Policy Assertion Token signature using the owner
+      certificate (Section 3.2 of <xref target="RFC8572"></xref>).</t>
+    </section>
+
+    <section anchor="Security" title="Security Considerations">
+      <t>The use of PAT object based on the validation of the digital
+      signature and the associated certificate requires consideration of the
+      authentication and authority or reputation of the signer to attest the
+      policy information of the DNS server being asserted. Bad actors can host
+      DNS-over-TLS and DNS-over-HTTPS servers, and claim the servers offer
+      privacy but exactly do the opposite to invade the privacy of the user.
+      Bad actor can get a domain name, host DNS-over-TLS and DNS-over-HTTPS
+      servers, and get the DNS server certificate signed by a CA. The policy
+      information will have to be attested using OV/EV certificates or a PAT
+      object signer trusted by the DNS client to prevent the attack.</t>
+
+      <t>If the PAT object is asserted by a third party, it can do a "time of
+      check" but the DNS server is susceptible of "time of use" attack. For
+      example, changes to the policy of the DNS server can cause a
+      disagreement between the auditor and the DNS server operation, hence the
+      PAT object needs to be also asserted by the domain hosting the DNS
+      server. In addition, the PAT object needs to have a short expiration
+      time (e.g., 7 days) to ensure the DNS server's domain re-asserts the
+      policy information and limits the damage from change in policy and
+      mis-issuance.</t>
+    </section>
+
+    <section anchor="IANA" title="IANA Considerations">
+      <section anchor="media-type-registration"
+               title="Media Type Registration">
+        <section anchor="media-type-registry-contents-additions-requested"
+                 title="Media Type Registry Contents Additions Requested">
+          <t>This section registers the 'application/pat' media type <xref
+          target="RFC2046"></xref> in the 'Media Types' registry in the manner
+          described in <xref target="RFC6838"></xref>, which can be used to
+          indicate that the content is a PAT defined JWT.</t>
+
+          <t><list style="symbols">
+              <t>Type name: application</t>
+
+              <t>Subtype name: pat</t>
+
+              <t>Required parameters: n/a</t>
+
+              <t>Optional parameters: n/a</t>
+
+              <t>Encoding considerations: 8bit; application/pat values are
+              encoded as a series of base64url-encoded values (some of which
+              may be the empty string) separated by period (&lsquo;.&rsquo;)
+              characters..</t>
+
+              <t>Security considerations: See the Security Considerations
+              Section of <xref target="RFC7515"></xref>.</t>
+
+              <t>Interoperability considerations: n/a</t>
+
+              <t>Published specification: [TODO this document]</t>
+
+              <t>Applications that use this media type: DNS</t>
+
+              <t>Fragment identifier considerations: n/a</t>
+
+              <t>Additional information: <vspace blankLines="1" /> Magic
+              number(s): n/a File extension(s): n/a Macintosh file type
+              code(s): n/a</t>
+
+              <t>Person &amp; email address to contact for further
+              information: Tirumaleswar Reddy, kondtir@gmail.com</t>
+
+              <t>Intended usage: COMMON</t>
+
+              <t>Restrictions on usage: none</t>
+
+              <t>Author: Tirumaleswar Reddy, kondtir@gmail.com</t>
+
+              <t>Change Controller: IESG</t>
+
+              <t>Provisional registration? No</t>
+            </list></t>
+        </section>
+      </section>
+
+      <section anchor="json-web-token-claims-registration"
+               title="JSON Web Token Claims Registration">
+        <section anchor="registry-contents-additions-requested"
+                 title="Registry Contents Additions Requested">
+          <t><list style="symbols">
+              <t>Claim Name: 'server'</t>
+
+              <t>Claim Description: DNS server identity</t>
+
+              <t>Change Controller: IESG</t>
+
+              <t>Specification Document(s): <xref
+              target="server-identity"></xref> of [TODO this document]</t>
+
+              <t>Claim Name: 'policyinfo'</t>
+
+              <t>Claim Description: Policy information of DNS server.</t>
+
+              <t>Change Controller: IESG</t>
+
+              <t>Specification Document(s): <xref target="policyinfo"></xref>
+              of [TODO this document]</t>
+            </list></t>
+        </section>
+      </section>
+
+      <section anchor="resolver-information"
+               title="DNS Resolver Information Registration">
+        <t>IANA will add the names filtering, qnameminimization, privacyurl
+        and auditurl to the DNS Resolver Information registry defined in
+        Section 5.2 of <xref
+        target="I-D.ietf-dnsop-resolver-information"></xref>.</t>
+      </section>
+    </section>
+
+    <section anchor="acknowledgments" title="Acknowledgments">
+      <t>This specification leverages some of the work that has been done in
+      <xref target="RFC8225"></xref>. Thanks to Ted Lemon, Paul Wouters and
+      Shashank Jain for the discussion and comments.</t>
+    </section>
+  </middle>
+
+  <back>
+    <references title="Normative References">
+      <?rfc include="reference.RFC.2119"?>
+
+      <?rfc include='reference.RFC.8174'?>
+
+      <?rfc include="reference.RFC.8484"?>
+
+      <?rfc include="reference.RFC.8499"?>
+
+      <?rfc include="reference.RFC.5280"?>
+
+      <?rfc include="reference.RFC.7515"?>
+
+      <?rfc include="reference.RFC.7519"?>
+
+      <?rfc include="reference.RFC.7518"?>
+
+      <?rfc include="reference.RFC.6979"?>
+
+      <?rfc include="reference.RFC.3986"?>
+
+      <?rfc include="reference.RFC.7638"?>
+
+      <?rfc include="reference.RFC.6838"?>
+
+      <?rfc include="reference.RFC.2046"?>
+
+      <?rfc include="reference.RFC.7858"?>
+    </references>
+
+    <references title="Informative References">
+      <?rfc include="reference.RFC.8310"?>
+
+      <?rfc include='reference.I-D.ietf-dnsop-resolver-information'?>
+
+      <?rfc include='reference.I-D.ietf-dnssd-push'?>
+
+      <?rfc include="reference.RFC.7626"?>
+
+      <?rfc include="reference.RFC.7816"?>
+
+      <?rfc include="reference.RFC.8225"?>
+
+      <?rfc include="reference.RFC.8572"?>
+
+      <?rfc include='reference.I-D.btw-add-home'?>
+
+      <?rfc include='reference.I-D.ietf-dnsop-extended-error' ?>
+
+      <?rfc include='reference.I-D.ietf-dnsop-terminology-ter'?>
+
+      <?rfc include='reference.I-D.ietf-dprive-bcp-op'?>
+
+      <reference anchor="UNICODE"
+                 target="http://www.unicode.org/versions/latest/">
+        <front>
+          <title>The Unicode Standard</title>
+
+          <author>
+            <organization>The Unicode Consortium</organization>
+          </author>
+
+          <date day="21" month="June" year="2016" />
+        </front>
+      </reference>
+    </references>
+
+    <section anchor="example-es256-based-pat-jws-serialization-and-signature"
+             title="Example ES256 based PAT JWS Serialization and Signature">
+      <t>For PAT, there will always be a JWS with the following members:</t>
+
+      <t><list style="symbols">
+          <t>'protected', with the value BASE64URL(UTF8(JWS Protected
+          Header))</t>
+
+          <t>'payload', with the value BASE64URL (JWS Payload)</t>
+
+          <t>'signature', with the value BASE64URL(JWS Signature)</t>
+        </list></t>
+
+      <t>This example will follow the steps in JWS <xref
+      target="RFC7515"></xref> Section 5.1, steps 1-6 and 8 and incorporates
+      the additional serialization steps required for PAT.</t>
+
+      <t>Step 1 for JWS references the JWS Payload, an example PAT Payload is
+      as follows:</t>
+
+      <figure>
+        <artwork><![CDATA[{
+  "server":{
+      "adn":["example.com"]
+  },
+  "iat":1443208345,
+  "exp":1443640345,
+  "policyinfo": {
+     "filtering": {
+         "malwareblocking": true,
+         "policyblocking": false
+     },
+     "qnameminimization":false,
+     "privacyurl": "https://example.com/commitment-to-privacy/"
+  } 
+}
+]]></artwork>
+      </figure>
+
+      <t>This would be serialized to the form (with line break used for
+      display purposes only):</t>
+
+      <figure>
+        <artwork><![CDATA[{"exp":1443640345,"iat":1443208345,"policyinfo":{
+"filtering":{"malwareblocking": true,"policyblocking": false},
+"privacyurl":"https://example.com/commitment-to-privacy/",
+"qnameminimization":false},"server":{"adn":["example.com"]}}
+]]></artwork>
+      </figure>
+
+      <t>Step 2 Computes the BASE64URL(JWS Payload) producing this value (with
+      line break used for display purposes only):</t>
+
+      <figure>
+        <artwork><![CDATA[
+eyJleHAiOjE0NDM2NDAzNDUsImlhdCI6MTQ0MzIwODM0NSwicG9saWN5aW5mbyI6e
+yJmaWx0ZXJpbmciOnsibWFsd2FyZWJsb2NraW5nIjp0cnVlLCJwb2xpY3libG9ja2
+luZyI6ZmFsc2V9LCJwcml2YWN5dXJsIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9jb21
+taXRtZW50LXRvLXByaXZhY3kvIiwicW5hbWVtaW5pbWl6YXRpb24iOmZhbHNlfSwi
+c2VydmVyIjp7ImFkbiI6WyJleGFtcGxlLmNvbSJdfX0
+
+
+]]></artwork>
+      </figure>
+
+      <t>For Step 3, an example PAT Protected Header comprising the JOSE
+      Header is as follows:</t>
+
+      <figure>
+        <artwork><![CDATA[
+{
+  "alg":"ES256",
+  "typ":"pat",
+  "x5u":"https://cert.example.com/pat.cer"
+}
+]]></artwork>
+      </figure>
+
+      <t>This would be serialized to the form (with line break used for
+      display purposes only):</t>
+
+      <figure>
+        <artwork><![CDATA[
+{"alg":"ES256","typ":"pat","x5u":"https://cert.example.com
+/pat.cer"}
+]]></artwork>
+      </figure>
+
+      <t>Step 4 Performs the BASE64URL(UTF8(JWS Protected Header)) operation
+      and encoding produces this value (with line break used for display
+      purposes only):</t>
+
+      <figure>
+        <artwork><![CDATA[
+eyJhbGciOiJFUzI1NiIsInR5cCI6InBhdCIsIng1dSI6Imh0dHBzOi8vY2VydC5l
+eGFtcGxlLmNvbS9wYXQuY2VyIn0
+
+
+]]></artwork>
+      </figure>
+
+      <t>Step 5 and Step 6 performs the computation of the digital signature
+      of the PAT Signing Input ASCII(BASE64URL(UTF8(JWS Protected Header)) ||
+      &lsquo;.&rsquo; || BASE64URL(JWS Payload)) using ES256 as the algorithm
+      and the BASE64URL(JWS Signature).</t>
+
+      <figure>
+        <artwork><![CDATA[
+4vQEAF_Vlp1Tr6sJmS4pnIKDRmIjH8EZzY5BMT2qJCHD8PmjBktWVnlmbmyHs05G
+KauRBdIFnfp3oDPbE0Jq4w
+
+]]></artwork>
+      </figure>
+
+      <t>Step 8 describes how to create the final PAT token, concatenating the
+      values in the order Header.Payload.Signature with period
+      (&lsquo;.&rsquo;) characters. For the above example values this would
+      produce the following (with line breaks between period used for
+      readability purposes only):</t>
+
+      <figure>
+        <artwork><![CDATA[
+eyJhbGciOiJFUzI1NiIsInR5cCI6InBhdCIsIng1dSI6Imh0dHBzOi8vY2VydC5l
+eGFtcGxlLmNvbS9wYXQuY2VyIn0
+.
+eyJleHAiOjE0NDM2NDAzNDUsImlhdCI6MTQ0MzIwODM0NSwicG9saWN5aW5mbyI6e
+yJmaWx0ZXJpbmciOnsibWFsd2FyZWJsb2NraW5nIjp0cnVlLCJwb2xpY3libG9ja2
+luZyI6ZmFsc2V9LCJwcml2YWN5dXJsIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9jb21
+taXRtZW50LXRvLXByaXZhY3kvIiwicW5hbWVtaW5pbWl6YXRpb24iOmZhbHNlfSwi
+c2VydmVyIjp7ImFkbiI6WyJleGFtcGxlLmNvbSJdfX0
+.
+4vQEAF_Vlp1Tr6sJmS4pnIKDRmIjH8EZzY5BMT2qJCHD8PmjBktWVnlmbmyHs05G
+KauRBdIFnfp3oDPbE0Jq4w
+]]></artwork>
+      </figure>
+
+      <section anchor="x509-private-key-in-pkcs8-format-for-es256-example"
+               title="X.509 Private Key in PKCS#8 Format for ES256 Example**">
+        <figure>
+          <artwork><![CDATA[
+-----BEGIN PRIVATE KEY-----
+MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgevZzL1gdAFr88hb2
+OF/2NxApJCzGCEDdfSp6VQO30hyhRANCAAQRWz+jn65BtOMvdyHKcvjBeBSDZH2r
+1RTwjmYSi9R/zpBnuQ4EiMnCqfMPWiZqB4QdbAd0E7oH50VpuZ1P087G
+-----END PRIVATE KEY-----
+]]></artwork>
+        </figure>
+      </section>
+
+      <section anchor="x509-public-key-for-es256-example"
+               title="X.509 Public Key for ES256 Example**">
+        <figure>
+          <artwork><![CDATA[
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEVs/o5+uQbTjL3chynL4wXgUg2R9
+q9UU8I5mEovUf86QZ7kOBIjJwqnzD1omageEHWwHdBO6B+dFabmdT9POxg==
+-----END PUBLIC KEY-----
+]]></artwork>
+        </figure>
+      </section>
+    </section>
+
+    <section anchor="example-es256-based-pat-jws-serialization-and-signatures"
+             title="Complete JWS JSON Serialization Representation with multiple Signatures">
+      <t>The JWS payload used in this example as follows.</t>
+
+      <t><figure>
+          <artwork><![CDATA[{
+  "server":{
+      "adn":["example.com"]
+  },
+  "iat":1443208345,
+  "exp":1443640345,
+  "policyinfo": {
+     "filtering": {
+         "malwareblocking": true,
+         "policyblocking": false
+     },
+     "qnameminimization":false,
+     "privacyurl": "https://example.com/commitment-to-privacy/"
+  } 
+}
+]]></artwork>
+        </figure></t>
+
+      <t>This would be serialized to the form (with line break used for
+      display purposes only):</t>
+
+      <figure>
+        <artwork><![CDATA[{"exp":1443640345,"iat":1443208345,"policyinfo":{
+"filtering":{"malwareblocking": true,"policyblocking": false},
+"privacyurl":"https://example.com/commitment-to-privacy/",
+"qnameminimization":false},"server":{"adn":["example.com"]}}
+]]></artwork>
+      </figure>
+
+      <t></t>
+
+      <t>The JWS protected Header value used for the first signature is same
+      as that used in the example in <xref
+      target="example-es256-based-pat-jws-serialization-and-signature"></xref>.
+      The X.509 private key used for generating the first signature is same as
+      that used in the example in <xref
+      target="x509-private-key-in-pkcs8-format-for-es256-example"></xref>.</t>
+
+      <t>The JWS Protected Header value used for the second signature is:</t>
+
+      <t><figure>
+          <artwork><![CDATA[{
+  "alg":"ES384",
+  "typ":"pat",
+  "x5u":"https://cert.audit-example.com/pat.cer"
+}
+]]></artwork>
+        </figure></t>
+
+      <t>The complete JWS JSON Serialization for these values is as follows
+      (with line breaks within values for display purposes only):</t>
+
+      <figure>
+        <artwork><![CDATA[{
+  "payload":
+       "eyJleHAiOjE0NDM2NDAzNDUsImlhdCI6MTQ0MzIwODM0NSwicG9saWN5aW5mbyI6
+        eyJmaWx0ZXJpbmciOnsibWFsd2FyZWJsb2NraW5nIjp0cnVlLCJwb2xpY3libG9j
+        a2luZyI6ZmFsc2V9LCJwcml2YWN5dXJsIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9j
+        b21taXRtZW50LXRvLXByaXZhY3kvIiwicW5hbWVtaW5pbWl6YXRpb24iOmZhbHNl
+        fSwic2VydmVyIjp7ImFkbiI6WyJleGFtcGxlLmNvbSJdfX0",
+  "signatures":[
+       {"protected":"eyJhbGciOiJFUzI1NiIsInR5cCI6InBhdCIsIng1dSI6Imh0dHB
+        zOi8vY2VydC5leGFtcGxlLmNvbS9wYXQuY2VyIn0",
+        "signature": "4vQEAF_Vlp1Tr6sJmS4pnIKDRmIjH8EZzY5BMT2qJCHD8PmjBk
+        tWVnlmbmyHs05GKauRBdIFnfp3oDPbE0Jq4w"},
+       {"protected":"eyJhbGciOiJFUzM4NCIsInR5cCI6InBhdCIsIng1dSI6Imh0dHB
+        zOi8vY2VydC5hdWRpdC1leGFtcGxlLmNvbS9wYXQuY2VyIn0",
+        "signature":666ag_mAqDa3Oyxo1DGXUocr0MmRjpXwq8kWp1S21mvs2-kPCIq3
+        0xsBJt4apy-sq3VyJgIqzjijoFYURhHvupF0obo-IFUGSZ1YHBCX_MiyBwJQJjtp
+        S91ujDatRTtZ"}]
+}
+]]></artwork>
+      </figure>
+
+      <section anchor="x509-private-key-in-pkcs8-format-for-es384-example"
+               title="X.509 Private Key in PKCS#8 format for E384 Example**">
+        <figure>
+          <artwork><![CDATA[
+-----BEGIN PRIVATE KEY-----
+MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgevZzL1gdAFr88hb2
+OF/2NxApJCzGCEDdfSp6VQO30hyhRANCAAQRWz+jn65BtOMvdyHKcvjBeBSDZH2r
+1RTwjmYSi9R/zpBnuQ4EiMnCqfMPWiZqB4QdbAd0E7oH50VpuZ1P087G
+-----END PRIVATE KEY-----
+]]></artwork>
+        </figure>
+      </section>
+
+      <section anchor="x509-public-key-for-es384-example"
+               title="X.509 Public Key for ES384 Example**">
+        <figure>
+          <artwork><![CDATA[
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEVs/o5+uQbTjL3chynL4wXgUg2R9
+q9UU8I5mEovUf86QZ7kOBIjJwqnzD1omageEHWwHdBO6B+dFabmdT9POxg==
+-----END PUBLIC KEY-----
+]]></artwork>
+        </figure>
+      </section>
+    </section>
+  </back>
+</rfc>
