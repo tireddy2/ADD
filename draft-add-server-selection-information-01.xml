@@ -451,7 +451,7 @@
               policy information of the DNS server. This is a mandatory
               attribute.</t>
 
-              <t hangText="auditurl:">A URL that points to the security
+              <t hangText="auditurl:">A URL that points to the security (including privacy) 
               assessment report of the DNS server by a third party auditor.
               This is an optional attribute.</t>
             </list></t>
