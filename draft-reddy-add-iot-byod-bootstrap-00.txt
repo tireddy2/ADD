@@ -14,14 +14,15 @@ Expires: October 9, 2020                                          Citrix
 
 
 A Bootstrapping Procedure to Discover and Authenticate DNS-over-TLS and
-                         DNS-over-HTTPS Servers
-                draft-reddy-add-bootstrap-dns-server-00
+            DNS-over-HTTPS Servers for IoT and BYOD Devices
+                   draft-reddy-add-iot-byod-bootstrap
 
 Abstract
 
    This document specifies mechanisms to bootstrap endpoints (e.g.,
    hosts, IoT devices) to discover and authenticate DNS-over-TLS and
-   DNS-over-HTTPS servers provided by a local network.
+   DNS-over-HTTPS servers provided by a local network for IoT/BYOD
+   devices in Enterprise networks.
 
 Status of This Memo
 
@@ -49,15 +50,15 @@ Copyright Notice
    Provisions Relating to IETF Documents
    (https://trustee.ietf.org/license-info) in effect on the date of
    publication of this document.  Please review these documents
-   carefully, as they describe your rights and restrictions with respect
 
 
 
 Reddy, et al.            Expires October 9, 2020                [Page 1]
 
-Internet-Draft          DoT/DoH server discovery              April 2020
+Internet-DraDoT/DoH server discovery for for BYOD/IoT device  April 2020
 
 
+   carefully, as they describe your rights and restrictions with respect
    to this document.  Code Components extracted from this document must
    include Simplified BSD License text as described in Section 4.e of
    the Trust Legal Provisions and are provided without warranty as
@@ -68,11 +69,10 @@ Table of Contents
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
    2.  Scope . . . . . . . . . . . . . . . . . . . . . . . . . . . .   4
    3.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   5
-   4.  Bootstrapping Endpoint Devices  . . . . . . . . . . . . . . .   6
+   4.  Bootstrapping Endpoint Devices  . . . . . . . . . . . . . . .   5
    5.  Bootstrapping IoT Devices . . . . . . . . . . . . . . . . . .   8
    6.  Connection Handshake and Service Invocation . . . . . . . . .   9
    7.  EST Service Discovery Procedure . . . . . . . . . . . . . . .  10
-     7.1.  mDNS  . . . . . . . . . . . . . . . . . . . . . . . . . .  10
    8.  Network Reattachment  . . . . . . . . . . . . . . . . . . . .  10
    9.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .  12
    10. Security Considerations . . . . . . . . . . . . . . . . . . .  12
@@ -89,11 +89,11 @@ Table of Contents
    networks.  This provides benefits such as low latency to reach that
    DNS server (owing to its network proximity to the endpoint).
    However, if an endpoint is configured to use Internet-hosted or
-   public DNS-over-TLS [RFC7858] or DNS-over-HTTPS [RFC8484] servers,
-   any available local DNS server cannot serve DNS requests from local
-   endpoints.  If public DNS servers are used instead of using local DNS
-   servers, some operational problems can occur such as those listed
-   below:
+   public DNS-over-TLS (DoT) [RFC7858] or DNS-over-HTTPS (DoH) [RFC8484]
+   servers, any available local DNS server cannot serve DNS requests
+   from local endpoints.  If public DNS servers are used instead of
+   using local DNS servers, some operational problems can occur such as
+   those listed below:
 
    o  "Split DNS" [RFC2775] to use the special internal-only domain
       names (e.g., "internal.example.com") in enterprise networks will
@@ -111,36 +111,36 @@ Table of Contents
 
 Reddy, et al.            Expires October 9, 2020                [Page 2]
 
-Internet-Draft          DoT/DoH server discovery              April 2020
+Internet-DraDoT/DoH server discovery for for BYOD/IoT device  April 2020
 
 
-   If public DNS servers are used instead of using local DNS servers,
-   the following discusses the impact on network-based security:
+   If public DNS servers are used instead of local DNS servers, the
+   following discusses the impacts on network-based security:
 
    o  Various network security services are provided by Enterprise
       networks to protect endpoints (e.g,. Hosts, IoT devices).
-      Network-based security solutions such as Firewalls (FW) and
+      Network-based security solutions such as firewalls (FW) and
       Intrusion Prevention Systems (IPS) rely on network traffic
       inspection to implement perimeter-based security policies.  The
       network security services may for example prevent malware
       download, block known malicious URLs, enforce use of strong
       ciphers, stop data exfiltration, etc.  These network security
       services act on DNS requests originating from endpoints.  However,
-      if an endpoint is configured to use public DNS-over-TLS or DNS-
-      over-HTTPS servers, network security services cannot act on DNS
-      requests from these endpoints.
+      if an endpoint is configured to use public DoH/DoT servers,
+      network security services cannot act on DNS requests from these
+      endpoints.
 
    o  In order to act on DNS requests from endpoints, network security
-      services can block DNS-over-TLS traffic by dropping outgoing
-      packets to destination port 853.  Identifying DNS-over-HTTPS
-      traffic is far more challenging than DNS-over-TLS traffic.
-      Network security services may try to identify the domains offering
-      DNS-over-HTTPS servers, and DNS-over-HTTPS traffic can be blocked
-      by dropping outgoing packets to these domains.  If an endpoint has
-      enabled strict privacy profile (Section 5 of [RFC8310]), and the
-      network security service blocks the traffic to the public DNS
-      server, the DNS service won't be available to the endpoint and
-      ultimately the endpoint cannot access Internet-reachable services.
+      services can block DoT traffic by dropping outgoing packets to
+      destination port 853.  Identifying DoH traffic is far more
+      challenging than DoT traffic.  Network security services may try
+      to identify the domains offering DoH servers, and DoH traffic can
+      be blocked by dropping outgoing packets to these domains.  If an
+      endpoint has enabled strict privacy profile (Section 5 of
+      [RFC8310]), and the network security service blocks the traffic to
+      the public DNS server, the DNS service won't be available to the
+      endpoint and ultimately the endpoint cannot access Internet-
+      reachable services.
 
    o  If an endpoint has enabled opportunistic privacy profile
       (Section 5 of [RFC8310]), and the network security service blocks
@@ -149,34 +149,33 @@ Internet-Draft          DoT/DoH server discovery              April 2020
       server provided by the local network or fallback to clear text
       DNS, and cannot exchange encrypted DNS messages.
 
-   If the network security service fails to block DNS-over-TLS or DNS-
-   over-HTTPS traffic, this can compromise the endpoint security; some
-   of the potential security threats are listed below:
+   If the network security service fails to block DoH/DoT traffic, this
+   can compromise the endpoint security; some of the potential security
+   threats are listed below:
 
    o  The network security service cannot prevent an endpoint from
       accessing malicious domains.
 
    o  If the endpoint is an IoT device which is configured to use public
-      DNS-over-TLS or DNS-over-HTTPS servers, and if a policy
-      enforcement point in the local network is programmed using, for
-      example, a Manufacturer Usage Description (MUD) file [RFC8520] by
-      a MUD manager to only allow intented communications to and from
-      the IoT device, the policy enforcement point cannot enforce the
+      DoH/DoT servers, and if a policy enforcement point in the local
+      network is programmed using, for example, a Manufacturer Usage
+      Description (MUD) file [RFC8520] by a MUD manager to only allow
+      intented communications to and from the IoT device, the policy
+
 
 
 
 Reddy, et al.            Expires October 9, 2020                [Page 3]
 
-Internet-Draft          DoT/DoH server discovery              April 2020
+Internet-DraDoT/DoH server discovery for for BYOD/IoT device  April 2020
 
 
-      network Access Control List (ACL) rules based on domain names
-      (Section 8 of [RFC8520]).
+      enforcement point cannot enforce the network Access Control List
+      (ACL) rules based on domain names (Section 8 of [RFC8520]).
 
-   If the network security service successfully blocks DNS-over-TLS and
-   DNS-over-HTTPS traffic, this can still compromise the endpoint
-   security and privacy; some of the potential security threats are
-   listed below:
+   If the network security service successfully blocks DoT and DoH
+   traffic, this can still compromise the endpoint security and privacy;
+   some of the potential security threats are listed below:
 
    o  Networks are susceptible to internal attacks as discussed in
       Section 3.2 of [I-D.arkko-farrell-arch-model-t].  An internal
@@ -189,9 +188,8 @@ Internet-Draft          DoT/DoH server discovery              April 2020
    RA which is insecure and also provides no mechanism to securely
    authenticate the DNS server.  To overcome the above threats, this
    document specifies a mechanism to bootstrap endpoints to discover and
-   authenticate the DNS-over-TLS and DNS-over-HTTPS servers provided by
-   their local network.  The overall procedure can be structured into
-   the following steps:
+   authenticate the DoT and DoH servers provided by their local network.
+   The overall procedure can be structured into the following steps:
 
    o  Bootstrapping (Section 4) is necessary only when connecting to a
       new network or when the network's DNS certificate has changed.
@@ -200,17 +198,17 @@ Internet-Draft          DoT/DoH server discovery              April 2020
       authenticating the EST server, DNS server certificate used by the
       local network is downloaded to the endpoint.  This DNS server
       certificate enables subsequent authenticated encrypted
-      communication with the local DNS server (e.g., DNS-over-HTTPS)
-      during in the connection phase.
+      communication with the local DNS server (e.g., DoH) during in the
+      connection phase.
 
    o  Connection handshake and service invocation (Section 6): The DNS
       client initiates a TLS handshake with the DNS server learned in
       the discovery phase, and validates the DNS server's identity using
       the credentials obtained in the bootstrapping phase.
 
-   Note: The strict and opportunistic privacy profiles as defined in
-   [RFC8310] only applies to DNS-over-TLS protocol, there has been no
-   such distinction made for DNS-over-HTTPS protocol.
+   Note:   The strict and opportunistic privacy profiles as defined in
+      [RFC8310] only applies to DoT protocol, there has been no such
+      distinction made for DoH protocol.
 
 2.  Scope
 
@@ -218,44 +216,44 @@ Internet-Draft          DoT/DoH server discovery              April 2020
    networks.  Typically Enterprise networks do not assume that all
    devices in their network are managed by the IT team or Mobile Device
    Management (MDM) devices, especially in the quite common BYOD ("Bring
+   Your Own Device") scenario.  The mechanisms specified in this
+   document can be used by BYOD devices to discover and authenticate DoT
 
 
 
 Reddy, et al.            Expires October 9, 2020                [Page 4]
 
-Internet-Draft          DoT/DoH server discovery              April 2020
+Internet-DraDoT/DoH server discovery for for BYOD/IoT device  April 2020
 
 
-   Your Own Device") scenario.  The mechanisms specified in this
-   document can be used by BYOD devices to discover and authenticate
-   DNS-over-TLS and DNS-over-HTTPS servers provided by the Enterprise
-   network.  This mechanism can also be used by IoT devices (managed by
-   IT team) after onboarding to discover and authenticate DNS- over-TLS
-   and DNS-over-HTTPS servers provided by the Enterprise network.
+   and DoH servers provided by the Enterprise network.  This mechanism
+   can also be used by IoT devices (managed by IT team) after onboarding
+   to discover and authenticate DoT and DoH servers provided by the
+   Enterprise network.
 
-   WiFi as frequently deployed is vulnerable to various attacks
+   WLAN as frequently deployed is vulnerable to various attacks
    ([Evil-Twin],[Krack] and [Dragonblood]).  Because of these attacks,
    only cryptographically authenticated communications are trusted on
-   WiFi networks.  This means information provided by the network via
-   DHCPv4, DHCPv6, or RA (e.g., NTP server, DNS server, default domain)
-   are un-trusted because DHCP and RA are not authenticated.
+   WLAN networks.  This means information provided by the network via
+   DHCP, DHCPv6, or RA (e.g., NTP server, DNS server, default domain)
+   are untrusted because DHCP and RA are not authenticated.
+   [I-D.btw-add-home] discusses DoH/DoT server discovery using DHCP/RA
+   but requires the DoH/DoT server to be pre-configured in the endpoint
+   (OS or Browser) or the DNS client must be able cryptographically
+   identify it is connecting to a DoT/DoH server hosted by a specific
+   organization (e.g., ISP or Enterprise) (see
+   [I-D.reddy-add-server-policy-selection]) to prevent the client from
+   connecting to a attackers server.
 
-   The users have to indicate to their system in some way that they
-   desire bootstrapping to be performed only when connecting to a
-   specific network (e.g., organization for which a user works or a user
-   works temporarily within another corporation), similar to the way
-   users disable VPN connection in specific network (e.g., Enterprise
-   network) and enable VPN connection by default in other networks.  If
-   the discovered DNS server meets the privacy preserving data policy
+   Users have to indicate to their system in some way that they desire
+   bootstrapping to be performed only when connecting to a specific
+   network (e.g., organization for which a user works or a user works
+   temporarily within another corporation), similar to the way users
+   disable VPN connection in specific network (e.g., Enterprise network)
+   and enable VPN connection by default in other networks.  If the
+   discovered DNS server meets the privacy preserving data policy
    requirements of the user, the user can select to use the discovered
-   DNS-over-TLS and DNS-over-HTTPS servers.  In addition, if the
-   discovered DNS-over-TLS and DNS-over-HTTPS servers is pre-configured
-   in the OS or browser, user can inform the system to use the servers
-   in untrusted networks (e.g. coffee shops, airports etc.).  It is
-   strongly recommended to configure the DNS server to be used in
-   untrusted networks provided the DNS server meets the privacy
-   preserving data policy requirements of the user, offers malware
-   filtering service and is pre-configured in the OS or browser.
+   DoT and DoH servers.
 
 3.  Terminology
 
@@ -270,24 +268,20 @@ Internet-Draft          DoT/DoH server discovery              April 2020
 
    'DoH/DoT' refers to DNS-over-HTTPS and/or DNS-over-TLS.
 
+4.  Bootstrapping Endpoint Devices
 
-
-
-
+   If an endpoint uses the credentials (username and password) provided
+   by the IT admin to mutually authenticate to the Enterprise WLAN
+   Access Point, the following steps can be used to securely bootstrap
+   the endpoint with the authentication domain name (ADN, defined in
 
 
 
 Reddy, et al.            Expires October 9, 2020                [Page 5]
 
-Internet-Draft          DoT/DoH server discovery              April 2020
+Internet-DraDoT/DoH server discovery for for BYOD/IoT device  April 2020
 
 
-4.  Bootstrapping Endpoint Devices
-
-   If an endpoint uses the credentials (username and password) provided
-   by the IT admin to mutually authenticate to the Enterprise WiFi
-   Access Point, the following steps can be used to securely bootstrap
-   the endpoint with the authentication domain name (ADN, defined in
    [RFC8310] and DNS server certificate of the local network's DoH/DoT
    server:
 
@@ -329,15 +323,6 @@ Internet-Draft          DoT/DoH server discovery              April 2020
        endpoint MUST validate the EST server certificate using the
        Implict Trust Anchor database (i.e, the EST server certificate
        must pass PKIX certification path validation [RFC6125]) and match
-
-
-
-
-Reddy, et al.            Expires October 9, 2020                [Page 6]
-
-Internet-Draft          DoT/DoH server discovery              April 2020
-
-
        the reference identifier against the EST server's identity
        according to the rules specified in Section 6.4 of [RFC6125].
 
@@ -345,6 +330,14 @@ Internet-Draft          DoT/DoH server discovery              April 2020
        the EST server.  The certificate provisioned to the DNS server in
        the local network will be treated as a End-Entity certificate.
        As a reminder, the End-Entity certificates must be validated by
+
+
+
+Reddy, et al.            Expires October 9, 2020                [Page 6]
+
+Internet-DraDoT/DoH server discovery for for BYOD/IoT device  April 2020
+
+
        the endpoint using an authorized trust anchor (Section 3.2 of
        [RFC8295]).  The endpoint needs to identify the certificate
        provisioned to the DNS server.  The SRV-ID identifier type
@@ -389,9 +382,16 @@ Internet-Draft          DoT/DoH server discovery              April 2020
 
 
 
+
+
+
+
+
+
+
 Reddy, et al.            Expires October 9, 2020                [Page 7]
 
-Internet-Draft          DoT/DoH server discovery              April 2020
+Internet-DraDoT/DoH server discovery for for BYOD/IoT device  April 2020
 
 
  +----------+                                     +--------+  +--------+
@@ -420,7 +420,7 @@ Internet-Draft          DoT/DoH server discovery              April 2020
          |                                              |          |
  [Identify the DNS server certificate in EE             |          |
   certificates to match with the certificate            |          |
-  by the DNS server in TLS handshake]                |          |
+  by the DNS server in TLS handshake]                   |          |
                                                         |          |
  [Configure ADN and associate DNS server certificate]   |          |
          |                                              |          |
@@ -447,7 +447,7 @@ Internet-Draft          DoT/DoH server discovery              April 2020
 
 Reddy, et al.            Expires October 9, 2020                [Page 8]
 
-Internet-Draft          DoT/DoH server discovery              April 2020
+Internet-DraDoT/DoH server discovery for for BYOD/IoT device  April 2020
 
 
       in combination with a registrar provided by the local network and
@@ -503,7 +503,7 @@ Internet-Draft          DoT/DoH server discovery              April 2020
 
 Reddy, et al.            Expires October 9, 2020                [Page 9]
 
-Internet-Draft          DoT/DoH server discovery              April 2020
+Internet-DraDoT/DoH server discovery for for BYOD/IoT device  April 2020
 
 
    If the match is successful and server certificate is successfully
@@ -521,7 +521,7 @@ Internet-Draft          DoT/DoH server discovery              April 2020
 
 7.  EST Service Discovery Procedure
 
-   A EST client discovers the EST server in the local network by using
+   An EST client discovers the EST server in the local network by using
    DNS-based Service Discovery (DNS-SD) [RFC6763] or Multicast DNS
    (mDNS) [RFC6762].  The <Domain> portion specifies the DNS sub-domain
    where the service instance is registered.  It may be "local.",
@@ -529,14 +529,12 @@ Internet-Draft          DoT/DoH server discovery              April 2020
    name such as "example.com.".  The <Service> portion of the EST
    service instance name MUST be "_est._tcp".
 
-7.1.  mDNS
-
    A EST client application can proactively discover an EST server being
    advertised in the site by multicasting a PTR query to the following:
 
-   o  "_est._tcp.local"
+      "_est._tcp.local"
 
-   A EST server can send out gratuitous multicast DNS answer packets
+   An EST server can send out gratuitous multicast DNS answer packets
    whenever it starts up, wakes from sleep, or detects a change in EST
    server configuration.  EST client application can receive these
    gratuitous packets and cache information contained in them.
@@ -554,16 +552,16 @@ Internet-Draft          DoT/DoH server discovery              April 2020
    (e.g.  The domain name of the privacy-enabling DNS server has changed
    because the Enterprise network has switched to a public privacy-
    enabling DNS server capable of blocking access to malicious domains),
+   the endpoint discovers and initiates TLS handshake with the EST
+   server, and uses the validation techniques described in [RFC6125] to
 
 
 
 Reddy, et al.            Expires October 9, 2020               [Page 10]
 
-Internet-Draft          DoT/DoH server discovery              April 2020
+Internet-DraDoT/DoH server discovery for for BYOD/IoT device  April 2020
 
 
-   the endpoint discovers and initiates TLS handshake with the EST
-   server, and uses the validation techniques described in [RFC6125] to
    compare the reference identifier (created in Step 2 of Section 4 in
    this document) to the EST server certificate and verifies the entire
    certification path as per [RFC5280].  The endpoint then gets the DNS
@@ -613,9 +611,11 @@ Internet-Draft          DoT/DoH server discovery              April 2020
 
 
 
+
+
 Reddy, et al.            Expires October 9, 2020               [Page 11]
 
-Internet-Draft          DoT/DoH server discovery              April 2020
+Internet-DraDoT/DoH server discovery for for BYOD/IoT device  April 2020
 
 
 9.  Privacy Considerations
@@ -671,30 +671,25 @@ Internet-Draft          DoT/DoH server discovery              April 2020
 
 Reddy, et al.            Expires October 9, 2020               [Page 12]
 
-Internet-Draft          DoT/DoH server discovery              April 2020
+Internet-DraDoT/DoH server discovery for for BYOD/IoT device  April 2020
 
-
-   If the browser or OS is pre-configured with a list of DNS servers
-   where some perform malware filtering and others do not, an attacker
-   can prevent contacting the preferred filtering DNS servers causing a
-   downgrade attack to a non-filtering DNS server, which the attacker
-   can leverage to deliver malware.  To prevent such an attack, it is
-   RECOMMENDED if any pre-configured DNS servers perform malware
-   filtering that all pre-configured DNS servers perform malware
-   filtering.
-
-   Related to the downgrade attack described in the previous paragraph,
-   if the browser or OS is pre-configured to use a DNS server that
-   filters malware, it MUST NOT use locally-learned DNS servers (e.g.,
-   learned via DHCP) unless they also perform malware filtering and also
-   conform to the user's privacy policy.
 
    Security considerations in [I-D.ietf-anima-bootstrapping-keyinfra]
    need to be taken into consideration for IoT devices.
 
 11.  IANA Considerations
 
-   IANA is requested to allocate the SRV service name of "est".
+   IANA is requested to allocate the following service name from the
+   registry available at: https://www.iana.org/assignments/service-
+   names-port-numbers/service-names-port-numbers.xhtml.
+
+        Service Name:            est
+        Port Number:             N/A
+        Transport Protocol(s):   TCP
+        Description:             Enrollment over Secure Transport (EST)
+        Assignee:                IESG <iesg@ietf.org>
+        Contact:                 IETF Chair <chair@ietf.org>
+        Reference:               [ThisDocument]
 
 12.  Acknowledgments
 
@@ -706,6 +701,12 @@ Internet-Draft          DoT/DoH server discovery              April 2020
 13.  References
 
 13.1.  Normative References
+
+   [I-D.ietf-anima-bootstrapping-keyinfra]
+              Pritikin, M., Richardson, M., Eckert, T., Behringer, M.,
+              and K. Watsen, "Bootstrapping Remote Secure Key
+              Infrastructures (BRSKI)", draft-ietf-anima-bootstrapping-
+              keyinfra-40 (work in progress), April 2020.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -724,10 +725,9 @@ Internet-Draft          DoT/DoH server discovery              April 2020
 
 
 
-
 Reddy, et al.            Expires October 9, 2020               [Page 13]
 
-Internet-Draft          DoT/DoH server discovery              April 2020
+Internet-DraDoT/DoH server discovery for for BYOD/IoT device  April 2020
 
 
    [RFC6125]  Saint-Andre, P. and J. Hodges, "Representation and
@@ -783,7 +783,7 @@ Internet-Draft          DoT/DoH server discovery              April 2020
 
 Reddy, et al.            Expires October 9, 2020               [Page 14]
 
-Internet-Draft          DoT/DoH server discovery              April 2020
+Internet-DraDoT/DoH server discovery for for BYOD/IoT device  April 2020
 
 
 13.2.  Informative References
@@ -818,12 +818,6 @@ Internet-Draft          DoT/DoH server discovery              April 2020
               Deployment Considerations for Home Networks", draft-btw-
               add-home-05 (work in progress), April 2020.
 
-   [I-D.ietf-anima-bootstrapping-keyinfra]
-              Pritikin, M., Richardson, M., Eckert, T., Behringer, M.,
-              and K. Watsen, "Bootstrapping Remote Secure Key
-              Infrastructures (BRSKI)", draft-ietf-anima-bootstrapping-
-              keyinfra-40 (work in progress), April 2020.
-
    [I-D.ietf-dnsop-terminology-ter]
               Hoffman, P., "Terminology for DNS Transports and
               Location", draft-ietf-dnsop-terminology-ter-01 (work in
@@ -835,15 +829,18 @@ Internet-Draft          DoT/DoH server discovery              April 2020
               Assertion Token", draft-reddy-add-server-policy-
               selection-00 (work in progress), March 2020.
 
+   [Krack]    The Unicode Consortium, "Key Reinstallation Attacks",
+              2017, <https://www.krackattacks.com/>.
+
+
+
+
 
 
 Reddy, et al.            Expires October 9, 2020               [Page 15]
 
-Internet-Draft          DoT/DoH server discovery              April 2020
+Internet-DraDoT/DoH server discovery for for BYOD/IoT device  April 2020
 
-
-   [Krack]    The Unicode Consortium, "Key Reinstallation Attacks",
-              2017, <https://www.krackattacks.com/>.
 
    [RFC2775]  Carpenter, B., "Internet Transparency", RFC 2775,
               DOI 10.17487/RFC2775, February 2000,
@@ -893,9 +890,12 @@ Authors' Addresses
 
 
 
+
+
+
 Reddy, et al.            Expires October 9, 2020               [Page 16]
 
-Internet-Draft          DoT/DoH server discovery              April 2020
+Internet-DraDoT/DoH server discovery for for BYOD/IoT device  April 2020
 
 
    Dan Wing

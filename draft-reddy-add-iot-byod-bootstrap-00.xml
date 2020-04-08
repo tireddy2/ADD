@@ -10,11 +10,13 @@
 <?rfc inline="yes"?>
 <?rfc compact="yes"?>
 <?rfc subcompact="no"?>
-<rfc category="std" docName="draft-reddy-add-bootstrap-dns-server-00"
+<rfc category="std" docName="draft-reddy-add-iot-byod-bootstrap"
      ipr="trust200902">
   <front>
-    <title abbrev="DoT/DoH server discovery">A Bootstrapping Procedure to
-    Discover and Authenticate DNS-over-TLS and DNS-over-HTTPS Servers</title>
+    <title
+    abbrev="DoT/DoH server discovery for for BYOD/IoT devices in Enterprise Networks">A
+    Bootstrapping Procedure to Discover and Authenticate DNS-over-TLS and
+    DNS-over-HTTPS Servers for IoT and BYOD Devices</title>
 
     <author fullname="Tirumaleswar Reddy" initials="T." surname="Reddy">
       <organization abbrev="McAfee">McAfee, Inc.</organization>
@@ -92,7 +94,8 @@
     <abstract>
       <t>This document specifies mechanisms to bootstrap endpoints (e.g.,
       hosts, IoT devices) to discover and authenticate DNS-over-TLS and
-      DNS-over-HTTPS servers provided by a local network.</t>
+      DNS-over-HTTPS servers provided by a local network for IoT/BYOD devices
+      in Enterprise networks.</t>
     </abstract>
   </front>
 
@@ -102,7 +105,7 @@
       networks. This provides benefits such as low latency to reach that DNS
       server (owing to its network proximity to the endpoint). However, if an
       endpoint is configured to use Internet-hosted or public DNS-over-TLS
-      <xref target="RFC7858"></xref> or DNS-over-HTTPS <xref
+      (DoT) <xref target="RFC7858"></xref> or DNS-over-HTTPS (DoH) <xref
       target="RFC8484"></xref> servers, any available local DNS server cannot
       serve DNS requests from local endpoints. If public DNS servers are used
       instead of using local DNS servers, some operational problems can occur
@@ -123,35 +126,33 @@
           target="CDN"></xref>.</t>
         </list></t>
 
-      <t>If public DNS servers are used instead of using local DNS servers,
-      the following discusses the impact on network-based security:</t>
+      <t>If public DNS servers are used instead of local DNS servers, the
+      following discusses the impacts on network-based security:</t>
 
       <t><list style="symbols">
           <t>Various network security services are provided by Enterprise
           networks to protect endpoints (e.g,. Hosts, IoT devices).
-          Network-based security solutions such as Firewalls (FW) and
+          Network-based security solutions such as firewalls (FW) and
           Intrusion Prevention Systems (IPS) rely on network traffic
           inspection to implement perimeter-based security policies. The
           network security services may for example prevent malware download,
           block known malicious URLs, enforce use of strong ciphers, stop data
           exfiltration, etc. These network security services act on DNS
           requests originating from endpoints. However, if an endpoint is
-          configured to use public DNS-over-TLS or DNS-over-HTTPS servers,
-          network security services cannot act on DNS requests from these
-          endpoints.</t>
+          configured to use public DoH/DoT servers, network security services
+          cannot act on DNS requests from these endpoints.</t>
 
           <t>In order to act on DNS requests from endpoints, network security
-          services can block DNS-over-TLS traffic by dropping outgoing packets
-          to destination port 853. Identifying DNS-over-HTTPS traffic is far
-          more challenging than DNS-over-TLS traffic. Network security
-          services may try to identify the domains offering DNS-over-HTTPS
-          servers, and DNS-over-HTTPS traffic can be blocked by dropping
-          outgoing packets to these domains. If an endpoint has enabled strict
-          privacy profile (Section 5 of <xref target="RFC8310"></xref>), and
-          the network security service blocks the traffic to the public DNS
-          server, the DNS service won't be available to the endpoint and
-          ultimately the endpoint cannot access Internet-reachable
-          services.</t>
+          services can block DoT traffic by dropping outgoing packets to
+          destination port 853. Identifying DoH traffic is far more
+          challenging than DoT traffic. Network security services may try to
+          identify the domains offering DoH servers, and DoH traffic can be
+          blocked by dropping outgoing packets to these domains. If an
+          endpoint has enabled strict privacy profile (Section 5 of <xref
+          target="RFC8310"></xref>), and the network security service blocks
+          the traffic to the public DNS server, the DNS service won't be
+          available to the endpoint and ultimately the endpoint cannot access
+          Internet-reachable services.</t>
 
           <t>If an endpoint has enabled opportunistic privacy profile (Section
           5 of <xref target="RFC8310"></xref>), and the network security
@@ -161,34 +162,33 @@
           text DNS, and cannot exchange encrypted DNS messages.</t>
         </list></t>
 
-      <t>If the network security service fails to block DNS-over-TLS or
-      DNS-over-HTTPS traffic, this can compromise the endpoint security; some
-      of the potential security threats are listed below:</t>
+      <t>If the network security service fails to block DoH/DoT traffic, this
+      can compromise the endpoint security; some of the potential security
+      threats are listed below:</t>
 
       <t><list style="symbols">
           <t>The network security service cannot prevent an endpoint from
           accessing malicious domains.</t>
 
           <t>If the endpoint is an IoT device which is configured to use
-          public DNS-over-TLS or DNS-over-HTTPS servers, and if a policy
-          enforcement point in the local network is programmed using, for
-          example, a Manufacturer Usage Description (MUD) file <xref
-          target="RFC8520"></xref> by a MUD manager to only allow intented
-          communications to and from the IoT device, the policy enforcement
-          point cannot enforce the network Access Control List (ACL) rules
-          based on domain names (Section 8 of <xref
-          target="RFC8520"></xref>).</t>
+          public DoH/DoT servers, and if a policy enforcement point in the
+          local network is programmed using, for example, a Manufacturer Usage
+          Description (MUD) file <xref target="RFC8520"></xref> by a MUD
+          manager to only allow intented communications to and from the IoT
+          device, the policy enforcement point cannot enforce the network
+          Access Control List (ACL) rules based on domain names (Section 8 of
+          <xref target="RFC8520"></xref>).</t>
         </list></t>
 
-      <t>If the network security service successfully blocks DNS-over-TLS and
-      DNS-over-HTTPS traffic, this can still compromise the endpoint security
-      and privacy; some of the potential security threats are listed
-      below:<list style="symbols">
+      <t>If the network security service successfully blocks DoT and DoH
+      traffic, this can still compromise the endpoint security and privacy;
+      some of the potential security threats are listed below:<list
+          style="symbols">
           <t>Networks are susceptible to internal attacks as discussed in
           Section 3.2 of <xref
           target="I-D.arkko-farrell-arch-model-t"></xref>. An internal
           attacker can modify the DNS responses to re-direct the client to
-          malicious servers. </t>
+          malicious servers.</t>
 
           <t>Pervasive monitoring of DNS traffic.</t>
         </list></t>
@@ -197,9 +197,9 @@
       DHCP/RA which is insecure and also provides no mechanism to securely
       authenticate the DNS server. To overcome the above threats, this
       document specifies a mechanism to bootstrap endpoints to discover and
-      authenticate the DNS-over-TLS and DNS-over-HTTPS servers provided by
-      their local network. The overall procedure can be structured into the
-      following steps:<list style="symbols">
+      authenticate the DoT and DoH servers provided by their local network.
+      The overall procedure can be structured into the following steps:<list
+          style="symbols">
           <t><xref target="bootstrap-endpoint">Bootstrapping</xref> is
           necessary only when connecting to a new network or when the
           network's DNS certificate has changed. Bootstrapping procedure
@@ -208,8 +208,8 @@
           authenticating the EST server, DNS server certificate used by the
           local network is downloaded to the endpoint. This DNS server
           certificate enables subsequent authenticated encrypted communication
-          with the local DNS server (e.g., DNS-over-HTTPS) during in the
-          connection phase.</t>
+          with the local DNS server (e.g., DoH) during in the connection
+          phase.</t>
 
           <t><xref target="auth">Connection handshake and service
           invocation</xref>: The DNS client initiates a TLS handshake with the
@@ -218,9 +218,12 @@
           bootstrapping phase.</t>
         </list></t>
 
-      <t>Note: The strict and opportunistic privacy profiles as defined in
-      <xref target="RFC8310"></xref> only applies to DNS-over-TLS protocol,
-      there has been no such distinction made for DNS-over-HTTPS protocol.</t>
+      <t><list style="hanging">
+          <t hangText="Note: ">The strict and opportunistic privacy profiles
+          as defined in <xref target="RFC8310"></xref> only applies to DoT
+          protocol, there has been no such distinction made for DoH
+          protocol.</t>
+        </list></t>
     </section>
 
     <section anchor="scope" title="Scope">
@@ -230,35 +233,34 @@
       Mobile Device Management (MDM) devices, especially in the quite common
       BYOD ("Bring Your Own Device") scenario. The mechanisms specified in
       this document can be used by BYOD devices to discover and authenticate
-      DNS-over-TLS and DNS-over-HTTPS servers provided by the Enterprise
-      network. This mechanism can also be used by IoT devices (managed by IT
-      team) after onboarding to discover and authenticate DNS- over-TLS and
-      DNS-over-HTTPS servers provided by the Enterprise network.</t>
+      DoT and DoH servers provided by the Enterprise network. This mechanism
+      can also be used by IoT devices (managed by IT team) after onboarding to
+      discover and authenticate DoT and DoH servers provided by the Enterprise
+      network.</t>
 
-      <t>WiFi as frequently deployed is vulnerable to various attacks (<xref
+      <t>WLAN as frequently deployed is vulnerable to various attacks (<xref
       target="Evil-Twin"></xref>,<xref target="Krack"> </xref> and <xref
       target="Dragonblood"></xref>). Because of these attacks, only
-      cryptographically authenticated communications are trusted on WiFi
-      networks. This means information provided by the network via DHCPv4,
+      cryptographically authenticated communications are trusted on WLAN
+      networks. This means information provided by the network via DHCP,
       DHCPv6, or RA (e.g., NTP server, DNS server, default domain) are
-      un-trusted because DHCP and RA are not authenticated.</t>
+      untrusted because DHCP and RA are not authenticated. <xref
+      target="I-D.btw-add-home"></xref> discusses DoH/DoT server discovery
+      using DHCP/RA but requires the DoH/DoT server to be pre-configured in
+      the endpoint (OS or Browser) or the DNS client must be able
+      cryptographically identify it is connecting to a DoT/DoH server hosted
+      by a specific organization (e.g., ISP or Enterprise) (see <xref
+      target="I-D.reddy-add-server-policy-selection"></xref>) to prevent the
+      client from connecting to a attackers server.</t>
 
-      <t>The users have to indicate to their system in some way that they
-      desire bootstrapping to be performed only when connecting to a specific
-      network (e.g., organization for which a user works or a user works
-      temporarily within another corporation), similar to the way users
-      disable VPN connection in specific network (e.g., Enterprise network)
-      and enable VPN connection by default in other networks. If the
-      discovered DNS server meets the privacy preserving data policy
-      requirements of the user, the user can select to use the discovered
-      DNS-over-TLS and DNS-over-HTTPS servers. In addition, if the discovered
-      DNS-over-TLS and DNS-over-HTTPS servers is pre-configured in the OS or
-      browser, user can inform the system to use the servers in untrusted
-      networks (e.g. coffee shops, airports etc.). It is strongly recommended
-      to configure the DNS server to be used in untrusted networks provided
-      the DNS server meets the privacy preserving data policy requirements of
-      the user, offers malware filtering service and is pre-configured in the
-      OS or browser.</t>
+      <t>Users have to indicate to their system in some way that they desire
+      bootstrapping to be performed only when connecting to a specific network
+      (e.g., organization for which a user works or a user works temporarily
+      within another corporation), similar to the way users disable VPN
+      connection in specific network (e.g., Enterprise network) and enable VPN
+      connection by default in other networks. If the discovered DNS server
+      meets the privacy preserving data policy requirements of the user, the
+      user can select to use the discovered DoT and DoH servers.</t>
 
       <!--
       <t>If the client device joins an open WiFi network (that is, one without
@@ -290,7 +292,7 @@
     <section anchor="bootstrap-endpoint"
              title="Bootstrapping Endpoint Devices">
       <t>If an endpoint uses the credentials (username and password) provided
-      by the IT admin to mutually authenticate to the Enterprise WiFi Access
+      by the IT admin to mutually authenticate to the Enterprise WLAN Access
       Point, the following steps can be used to securely bootstrap the
       endpoint with the authentication domain name (ADN, defined in <xref
       target="RFC8310"></xref> and DNS server certificate of the local
@@ -350,7 +352,7 @@
           DNS-ID "example.net". The SRV service label "domain-s" is defined in
           Section 6 of <xref target="RFC7858"></xref> for DoT protocol. The
           SRV service label "doh" is defined in Section 10.4 of <xref
-          target="I-D.btw-add-home"></xref> for DoH protocol. </t>
+          target="I-D.btw-add-home"></xref> for DoH protocol.</t>
 
           <t>The endpoint configures the authentication domain name (ADN)
           (defined in <xref target="RFC8310"></xref>) for the DNS server from
@@ -393,7 +395,7 @@
         |                                              |          |                                         
 [Identify the DNS server certificate in EE             |          | 
  certificates to match with the certificate            |          |  
- by the DNS server in TLS handshake]                |          |                                          
+ by the DNS server in TLS handshake]                   |          |                                          
                                                        |          |
 [Configure ADN and associate DNS server certificate]   |          | 
         |                                              |          |                                         
@@ -483,7 +485,7 @@
     </section>
 
     <section anchor="EST_Discovery" title="EST Service Discovery Procedure">
-      <t>A EST client discovers the EST server in the local network by using
+      <t>An EST client discovers the EST server in the local network by using
       DNS-based Service Discovery (DNS-SD) <xref target="RFC6763"></xref> or
       Multicast DNS (mDNS) <xref target="RFC6762"></xref>. The &lt;Domain&gt;
       portion specifies the DNS sub-domain where the service instance is
@@ -492,18 +494,15 @@
       &lt;Service&gt; portion of the EST service instance name MUST be
       "_est._tcp".</t>
 
-      <section title="mDNS">
-        <t>A EST client application can proactively discover an EST server
-        being advertised in the site by multicasting a PTR query to the
-        following:</t>
+      <t>A EST client application can proactively discover an EST server being
+      advertised in the site by multicasting a PTR query to the following:</t>
 
-        <t><list style="symbols">
-            <t>"_est._tcp.local"</t>
-          </list>A EST server can send out gratuitous multicast DNS answer
-        packets whenever it starts up, wakes from sleep, or detects a change
-        in EST server configuration. EST client application can receive these
-        gratuitous packets and cache information contained in them. </t>
-      </section>
+      <t><list style="empty">
+          <t>"_est._tcp.local"</t>
+        </list>An EST server can send out gratuitous multicast DNS answer
+      packets whenever it starts up, wakes from sleep, or detects a change in
+      EST server configuration. EST client application can receive these
+      gratuitous packets and cache information contained in them.</t>
     </section>
 
     <section anchor="reattach" title="Network Reattachment">
@@ -619,27 +618,26 @@
       and the server certificate is validated for subsequent TLS connections
       to the EST server.</t>
 
-      <t>If the browser or OS is pre-configured with a list of DNS servers
-      where some perform malware filtering and others do not, an attacker can
-      prevent contacting the preferred filtering DNS servers causing a
-      downgrade attack to a non-filtering DNS server, which the attacker can
-      leverage to deliver malware. To prevent such an attack, it is
-      RECOMMENDED if any pre-configured DNS servers perform malware filtering
-      that all pre-configured DNS servers perform malware filtering.</t>
-
-      <t>Related to the downgrade attack described in the previous paragraph,
-      if the browser or OS is pre-configured to use a DNS server that filters
-      malware, it MUST NOT use locally-learned DNS servers (e.g., learned via
-      DHCP) unless they also perform malware filtering and also conform to the
-      user's privacy policy.</t>
-
       <t>Security considerations in <xref
       target="I-D.ietf-anima-bootstrapping-keyinfra"></xref> need to be taken
       into consideration for IoT devices.</t>
     </section>
 
     <section anchor="IANA" title="IANA Considerations">
-      <t>IANA is requested to allocate the SRV service name of "est".</t>
+      <t>IANA is requested to allocate the following service name from the
+      registry available at:
+      https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml.</t>
+
+      <t><figure>
+          <artwork><![CDATA[     Service Name:            est
+     Port Number:             N/A
+     Transport Protocol(s):   TCP
+     Description:             Enrollment over Secure Transport (EST)
+     Assignee:                IESG <iesg@ietf.org>
+     Contact:                 IETF Chair <chair@ietf.org>
+     Reference:               [ThisDocument]
+]]></artwork>
+        </figure></t>
     </section>
 
     <section anchor="acknowledgments" title="Acknowledgments">
@@ -675,6 +673,8 @@
       <?rfc include="reference.RFC.6762"?>
 
       <?rfc include="reference.RFC.5280"?>
+
+      <?rfc include='reference.I-D.ietf-anima-bootstrapping-keyinfra'?>
     </references>
 
     <references title="Informative References">
@@ -683,8 +683,6 @@
       <?rfc include="reference.RFC.8120"?>
 
       <?rfc include='reference.I-D.barnes-tls-pake'?>
-
-      <?rfc include='reference.I-D.ietf-anima-bootstrapping-keyinfra'?>
 
       <?rfc include='reference.I-D.reddy-add-server-policy-selection'?>
 
