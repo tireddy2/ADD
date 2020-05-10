@@ -5,8 +5,8 @@
 ADD                                                             T. Reddy
 Internet-Draft                                                    McAfee
 Intended status: Informational                                   D. Wing
-Expires: November 10, 2020                                        Citrix
-                                                             May 9, 2020
+Expires: November 11, 2020                                        Citrix
+                                                            May 10, 2020
 
 
   DNS-over-HTTPS and DNS-over-TLS Server Deployment Considerations for
@@ -38,7 +38,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on November 10, 2020.
+   This Internet-Draft will expire on November 11, 2020.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Reddy & Wing            Expires November 10, 2020               [Page 1]
+Reddy & Wing            Expires November 11, 2020               [Page 1]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Reddy & Wing            Expires November 10, 2020               [Page 2]
+Reddy & Wing            Expires November 11, 2020               [Page 2]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -165,7 +165,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-Reddy & Wing            Expires November 10, 2020               [Page 3]
+Reddy & Wing            Expires November 11, 2020               [Page 3]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -213,26 +213,28 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
       owner certificate (Section 3.2 of [RFC8572]).
 
    o  When IoT devices connect to a network via EAP methods such as
-      [RFC7170], it would be possible to extend these methods to return
-      additional configuration elements as part of completion of the
-      authentication transaction.  One simple approach would be after
-      successful completion of the EAP method in Phase 2 for a TEAP
+      Tunnel Extensible Authentication Protocol (TEAP) [RFC7170], it
+      would be possible to extend these methods to return additional
+      configuration elements as part of completion of the authentication
+      transaction.  One simple approach would be after successful
 
 
 
 
-Reddy & Wing            Expires November 10, 2020               [Page 4]
+Reddy & Wing            Expires November 11, 2020               [Page 4]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
-      server to return a new TLV that indicates the local DoH/DoT
-      information.
+      completion of the EAP method in Phase 2 for a TEAP server to
+      return a new TLV that indicates the local DoH/DoT information.
 
    o  Not all of IoT devices support 802.1x supplicant and need an
       alternate mechanism to connect to the Enterprise network.  To
       address this limitation, unique pre-shared keys are created for
-      each IoT device and WPA-PSK is used [PSK].
+      each IoT device and WPA-PSK is used [PSK].  In other words, WPA-
+      PSK is used with unique pre-shared keys for different IoT devices
+      to deal security issues.
 
       *  The IoT device needs to be provisioned with a Pre-Shared Key
          (PSK) for mutual authentication.  The PSK is only known to the
@@ -275,9 +277,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-
-
-Reddy & Wing            Expires November 10, 2020               [Page 5]
+Reddy & Wing            Expires November 11, 2020               [Page 5]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -333,7 +333,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-Reddy & Wing            Expires November 10, 2020               [Page 6]
+Reddy & Wing            Expires November 11, 2020               [Page 6]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -389,7 +389,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-Reddy & Wing            Expires November 10, 2020               [Page 7]
+Reddy & Wing            Expires November 11, 2020               [Page 7]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -445,7 +445,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-Reddy & Wing            Expires November 10, 2020               [Page 8]
+Reddy & Wing            Expires November 11, 2020               [Page 8]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -501,7 +501,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-Reddy & Wing            Expires November 10, 2020               [Page 9]
+Reddy & Wing            Expires November 11, 2020               [Page 9]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -557,7 +557,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-Reddy & Wing            Expires November 10, 2020              [Page 10]
+Reddy & Wing            Expires November 11, 2020              [Page 10]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -613,4 +613,4 @@ Authors' Addresses
 
 
 
-Reddy & Wing            Expires November 10, 2020              [Page 11]
+Reddy & Wing            Expires November 11, 2020              [Page 11]

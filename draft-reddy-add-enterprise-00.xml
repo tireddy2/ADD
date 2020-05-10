@@ -213,7 +213,8 @@
           target="RFC8572"></xref>).</t>
 
           <t>When IoT devices connect to a network via EAP methods such as
-          <xref target="RFC7170"></xref>, it would be possible to extend these
+          Tunnel Extensible Authentication Protocol (TEAP) <xref
+          target="RFC7170"></xref>, it would be possible to extend these
           methods to return additional configuration elements as part of
           completion of the authentication transaction. One simple approach
           would be after successful completion of the EAP method in Phase 2
@@ -223,8 +224,9 @@
           <t>Not all of IoT devices support 802.1x supplicant and need an
           alternate mechanism to connect to the Enterprise network. To address
           this limitation, unique pre-shared keys are created for each IoT
-          device and WPA-PSK is used <xref target="PSK"></xref>.<list
-              style="symbols">
+          device and WPA-PSK is used <xref target="PSK"></xref>. In other
+          words, WPA-PSK is used with unique pre-shared keys for different IoT
+          devices to deal security issues.<list style="symbols">
               <t>The IoT device needs to be provisioned with a Pre-Shared Key
               (PSK) for mutual authentication. The PSK is only known to the
               IoT device and the WPA server. In this case, the bootstrapping
