@@ -139,7 +139,7 @@
           pervasively monitor the DNS traffic. The reader may refer to Section
           3.2.1 of <xref target="I-D.arkko-farrell-arch-model-t"></xref> for a
           discussion on the need for more awareness about attacks from within
-          closed domains. </t>
+          closed domains.</t>
         </list></t>
 
       <t>To overcome the above threats, this document specifies mechanisms to
@@ -219,7 +219,7 @@
           completion of the authentication transaction. One simple approach
           would be after successful completion of the EAP method in Phase 2
           for a TEAP server to return a new TLV that indicates the local
-          DoH/DoT information. </t>
+          DoH/DoT information.</t>
 
           <t>Not all of IoT devices support 802.1x supplicant and need an
           alternate mechanism to connect to the Enterprise network. To address
@@ -310,7 +310,7 @@
           advent of closed OS like <xref target="win10s">Windows 10 in S
           mode</xref> or <xref target="Chromebook">Chromebook</xref>, where
           applications are sandboxed (e.g., ransomware attack is not possbile)
-          and applications can only be installed via the OS store. </t>
+          and applications can only be installed via the OS store.</t>
         </list></t>
     </section>
 
@@ -344,7 +344,8 @@
     </section>
 
     <section title="Acknowledgements">
-      <t>Thanks to Mohamed Boucadair for the discussion and comments.</t>
+      <t>Thanks to Mohamed Boucadair and Eliot Lear for the discussion and
+      comments.</t>
     </section>
   </middle>
 
@@ -529,7 +530,7 @@
                  target="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-peap/5308642b-90c9-4cc4-beec-fb367325c0f9">
         <front>
           <title>[MS-PEAP]: Protected Extensible Authentication Protocol
-          (PEAP) </title>
+          (PEAP)</title>
 
           <author>
             <organization>Microsoft</organization>

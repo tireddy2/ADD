@@ -5,8 +5,8 @@
 ADD                                                             T. Reddy
 Internet-Draft                                                    McAfee
 Intended status: Informational                                   D. Wing
-Expires: November 11, 2020                                        Citrix
-                                                            May 10, 2020
+Expires: November 14, 2020                                        Citrix
+                                                            May 13, 2020
 
 
   DNS-over-HTTPS and DNS-over-TLS Server Deployment Considerations for
@@ -38,7 +38,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on November 11, 2020.
+   This Internet-Draft will expire on November 14, 2020.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Reddy & Wing            Expires November 11, 2020               [Page 1]
+Reddy & Wing            Expires November 14, 2020               [Page 1]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Reddy & Wing            Expires November 11, 2020               [Page 2]
+Reddy & Wing            Expires November 14, 2020               [Page 2]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -165,7 +165,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-Reddy & Wing            Expires November 11, 2020               [Page 3]
+Reddy & Wing            Expires November 14, 2020               [Page 3]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -221,7 +221,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-Reddy & Wing            Expires November 11, 2020               [Page 4]
+Reddy & Wing            Expires November 14, 2020               [Page 4]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -277,7 +277,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-Reddy & Wing            Expires November 11, 2020               [Page 5]
+Reddy & Wing            Expires November 14, 2020               [Page 5]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -333,7 +333,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-Reddy & Wing            Expires November 11, 2020               [Page 6]
+Reddy & Wing            Expires November 14, 2020               [Page 6]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -368,7 +368,8 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 8.  Acknowledgements
 
-   Thanks to Mohamed Boucadair for the discussion and comments.
+   Thanks to Mohamed Boucadair and Eliot Lear for the discussion and
+   comments.
 
 9.  References
 
@@ -388,8 +389,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-
-Reddy & Wing            Expires November 11, 2020               [Page 7]
+Reddy & Wing            Expires November 14, 2020               [Page 7]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -445,7 +445,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-Reddy & Wing            Expires November 11, 2020               [Page 8]
+Reddy & Wing            Expires November 14, 2020               [Page 8]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -501,7 +501,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-Reddy & Wing            Expires November 11, 2020               [Page 9]
+Reddy & Wing            Expires November 14, 2020               [Page 9]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -557,7 +557,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-Reddy & Wing            Expires November 11, 2020              [Page 10]
+Reddy & Wing            Expires November 14, 2020              [Page 10]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -613,4 +613,4 @@ Authors' Addresses
 
 
 
-Reddy & Wing            Expires November 11, 2020              [Page 11]
+Reddy & Wing            Expires November 14, 2020              [Page 11]
