@@ -19,19 +19,19 @@ Expires: November 19, 2020                                        Citrix
 Abstract
 
    The document defines a mechanism that allows communication of DNS
-   resolver information to DNS clients for use in selection decisions.
-   In particular, the document defines a mechanism for a DNS server to
-   communicate its filtering policy and privacy statement URL to DNS
-   clients.  This information is cryptographically signed to attest its
-   authenticity.  Such information is used for the selection of DNS
-   resolvers.  Typically, evaluating the DNS privacy statement,
+   resolver information to DNS clients for use in server selection
+   decisions.  In particular, the document defines a mechanism for a DNS
+   server to communicate its filtering policy and privacy statement URL
+   to DNS clients.  This information is cryptographically signed to
+   attest its authenticity.  Such information is used for the selection
+   of DNS resolvers.  Typically, evaluating the DNS privacy statement,
    filtering policy, and the signatory, DNS clients with minimum human
    intervention can select the DNS server that best supports the user's
    desired privacy and filtering policy.
 
-   This assertion is useful for DNS-over-TLS and DNS-over-HTTPS servers
-   that are either public resolvers or are discovered in a local
-   network.
+   This assertion is useful for encrypted DNS (e.g., DNS-over-TLS and
+   DNS-over-HTTPS) servers that are either public resolvers or are
+   discovered in a local network.
 
 Status of This Memo
 
@@ -81,20 +81,20 @@ Table of Contents
    4.  Policy Assertion Token (PAT): Overview  . . . . . . . . . . .   5
    5.  PAT Header  . . . . . . . . . . . . . . . . . . . . . . . . .   6
      5.1.  'typ' (Type) Header Parameter . . . . . . . . . . . . . .   6
-     5.2.  'alg' (Algorithm) Header Parameter  . . . . . . . . . . .   6
+     5.2.  'alg' (Algorithm) Header Parameter  . . . . . . . . . . .   7
      5.3.  'x5u' (X.509 URL) Header Parameter  . . . . . . . . . . .   7
      5.4.  An Example of PAT Header  . . . . . . . . . . . . . . . .   7
-   6.  PAT Payload . . . . . . . . . . . . . . . . . . . . . . . . .   7
+   6.  PAT Payload . . . . . . . . . . . . . . . . . . . . . . . . .   8
      6.1.  JWT Defined Claims  . . . . . . . . . . . . . . . . . . .   8
        6.1.1.  'iat' - Issued At Claim . . . . . . . . . . . . . . .   8
        6.1.2.  'exp' - Expiration Time Claim . . . . . . . . . . . .   8
      6.2.  PAT Specific Claims . . . . . . . . . . . . . . . . . . .   8
-       6.2.1.  DNS Server Identity Claims  . . . . . . . . . . . . .   8
+       6.2.1.  DNS Server Identity Claims  . . . . . . . . . . . . .   9
        6.2.2.  'policyinfo' (Policy Information) Claim . . . . . . .   9
        6.2.3.  Example . . . . . . . . . . . . . . . . . . . . . . .  10
    7.  PAT Signature . . . . . . . . . . . . . . . . . . . . . . . .  10
    8.  Extending PAT . . . . . . . . . . . . . . . . . . . . . . . .  11
-   9.  Deterministic JSON Serialization  . . . . . . . . . . . . . .  11
+   9.  Deterministic JSON Serialization  . . . . . . . . . . . . . .  12
      9.1.  Example PAT Deterministic JSON Form . . . . . . . . . . .  12
    10. Privacy Considerations  . . . . . . . . . . . . . . . . . . .  13
    11. Security Considerations . . . . . . . . . . . . . . . . . . .  13
@@ -103,8 +103,8 @@ Table of Contents
        12.1.1.  Media Type Registry Contents Additions Requested . .  14
      12.2.  JSON Web Token Claims Registration . . . . . . . . . . .  15
        12.2.1.  Registry Contents Additions Requested  . . . . . . .  15
-     12.3.  DNS Resolver Information Registration  . . . . . . . . .  15
-   13. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  15
+     12.3.  DNS Resolver Information Registration  . . . . . . . . .  16
+   13. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  16
    14. References  . . . . . . . . . . . . . . . . . . . . . . . . .  16
 
 
@@ -117,32 +117,32 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
      14.1.  Normative References . . . . . . . . . . . . . . . . . .  16
      14.2.  Informative References . . . . . . . . . . . . . . . . .  17
    Appendix A.  Example ES256 based PAT JWS Serialization and
-                Signature  . . . . . . . . . . . . . . . . . . . . .  18
-     A.1.  X.509 Private Key in PKCS#8 Format for ES256 Example**  .  20
+                Signature  . . . . . . . . . . . . . . . . . . . . .  19
+     A.1.  X.509 Private Key in PKCS#8 Format for ES256 Example**  .  21
      A.2.  X.509 Public Key for ES256 Example**  . . . . . . . . . .  21
    Appendix B.  Complete JWS JSON Serialization Representation with
                 multiple Signatures  . . . . . . . . . . . . . . . .  21
      B.1.  X.509 Private Key in PKCS#8 format for E384 Example** . .  22
-     B.2.  X.509 Public Key for ES384 Example**  . . . . . . . . . .  22
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  22
+     B.2.  X.509 Public Key for ES384 Example**  . . . . . . . . . .  23
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  23
 
 1.  Introduction
 
    [RFC7626] discusses DNS privacy considerations in both "on the wire"
    (Section 2.4 of [RFC7626]) and "in the server" (Section 2.5 of
-   [RFC7626]) contexts.  Two protocols that provide encrypted channels
-   between DNS clients and servers are DNS-over-HTTPS (DoH) [RFC8484]
-   and DNS-over-TLS (DoT) [RFC7858].
+   [RFC7626]) contexts.  Examples of protocols that provide encrypted
+   channels between DNS clients and servers are DNS-over-HTTPS (DoH)
+   [RFC8484] and DNS-over-TLS (DoT) [RFC7858].
 
-   DNS clients can discover and authenticate DoH and DoT servers
-   provided by a local network, for example using the techniques
-   proposed in [I-D.btw-add-home].  If the mechanism used to discover
-   the DoH/DoT server is insecure, the DNS client needs evidence about
-   the DoH/DoT server to assess its trustworthiness and a way to
-   appraise such evidence.  The mechanism specified in this document can
-   be used by the DNS client to cryptographically identify it is
-   connecting to a DoT/DoH server hosted by a specific organization
-   (e.g., ISP or Enterprise).
+   DNS clients can discover and authenticate encrypted DNS (e.g., DoH
+   and DoT) servers provided by a local network, for example using the
+   techniques proposed in [I-D.btw-add-home].  If the mechanism used to
+   discover the encrypted DNS server is insecure, the DNS client needs
+   evidence about the encrypted server to assess its trustworthiness and
+   a way to appraise such evidence.  The mechanism specified in this
+   document can be used by the DNS client to cryptographically identify
+   it is connecting to an encrypted DNS server hosted by a specific
+   organization (e.g., ISP or Enterprise).
 
    The DNS Recursive Operator Privacy (DROP) statement explained in
    [I-D.ietf-dprive-bcp-op] outlines the recommended contents a DNS
@@ -170,7 +170,7 @@ Reddy, et al.           Expires November 19, 2020               [Page 3]
 Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
 
-   and use that information to fed a DNS server selection procedure.
+   and use that information to feed a DNS server selection procedure.
    The following parameters are supported in this version:
 
    Malware blocking:  Indicates whether the DNS server offers malware
@@ -195,10 +195,10 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
    signed policies to DNS clients contributes to solve the following
    problems in various deployments:
 
-   o  The DoH/DoT server advertised using DHCP/RA in Home and Mobile
-      networks is insecure, the mechanism specified in this document can
-      be used by the DNS client to validate the signatory (e.g.,
-      cryptographically attested by the ISP).
+   o  The encrypted DNS server advertised using DHCP/RA in Home and
+      Mobile networks is insecure, the mechanism specified in this
+      document can be used by the DNS client to validate the signatory
+      (e.g., cryptographically attested by the ISP).
 
    o  Typically Enterprise networks do not assume that all devices in
       their network are managed by the IT team or Mobile Device
@@ -211,13 +211,13 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
    o  The user selects specific well-known networks (e.g., organization
       for which a user works or a user works temporarily within another
       corporation) to learn the privacy policy statement and filtering
-      policy of the local DNS server.  If the discovered DoH/DoT server
-      does not meet the privacy preserving data policy and filtering
-      requirements of the user, the DNS client can take appropriate
-      actions.  For example, the action can be to use the discovered DNS
-      server only to access internal-only DNS names and use another DNS
-      server (adhering with the user's expectations) for public domains.
-
+      policy of the local DNS server.  If the discovered encrypted DNS
+      server does not meet the privacy preserving data policy and
+      filtering requirements of the user, the DNS client can take
+      appropriate actions.  For example, the action can be to use the
+      discovered DNS server only to access internal-only DNS names and
+      use another DNS server (adhering with the user's expectations) for
+      public domains.
 
 
 
@@ -230,9 +230,9 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
       filtering in the attached network.  If the network is well-known
       to the DNS client and the local DNS server meets the privacy
       requirements of the user, the DNS client can continue to use
-      encrypted connection with the local DoH/DoT server.  If the error
-      code returned by the DNS server indicates access to the domain is
-      blocked because of internal security policy
+      encrypted connection with the local encrypted DNS server.  If the
+      error code returned by the DNS server indicates access to the
+      domain is blocked because of internal security policy
       [I-D.ietf-dnsop-extended-error], the DNS client can securely
       identify access to the domain is censored by the network.
 
@@ -264,6 +264,9 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
    'DoH/DoT' refers to DNS-over-HTTPS and/or DNS-over-TLS.
 
+   'Encrypted DNS' refers to a DNS protocol that provides an encrypted
+   channel between a DNS client and server (e.g., DoT or DoH).
+
 4.  Policy Assertion Token (PAT): Overview
 
    JSON Web Token (JWT) [RFC7519] and JSON Web Signature (JWS) [RFC7515]
@@ -271,9 +274,6 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
    used as a way of encapsulating claimed or asserted information with
    an associated digital signature using X.509 based certificates.  JWT
    provides a set of claims in JSON format that can accommodate asserted
-   policy information of the DoH/DoT server.  Additionally, JWS provides
-   a path for updating methods and cryptographic algorithms used for the
-   associated digital signatures.
 
 
 
@@ -281,6 +281,10 @@ Reddy, et al.           Expires November 19, 2020               [Page 5]
 
 Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
+
+   policy information of the DoH/DoT server.  Additionally, JWS provides
+   a path for updating methods and cryptographic algorithms used for the
+   associated digital signatures.
 
    JWS defines the use of JSON data structures in a specified canonical
    format for signing data corresponding to JOSE header, JWS Payload,
@@ -324,11 +328,7 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
    For PAT Token the 'typ' header MUST be the string 'pat'.  This
    represents that the encoded token is a JWT of type pat.
 
-5.2.  'alg' (Algorithm) Header Parameter
 
-   The 'alg' (Algorithm) Header Parameter is defined in Section 4.1.1 of
-   [RFC7515].  It specifies the JWS signature cryptographic algorithm.
-   It also refers to a list of defined 'alg' values as part of a
 
 
 
@@ -338,6 +338,11 @@ Reddy, et al.           Expires November 19, 2020               [Page 6]
 Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
 
+5.2.  'alg' (Algorithm) Header Parameter
+
+   The 'alg' (Algorithm) Header Parameter is defined in Section 4.1.1 of
+   [RFC7515].  It specifies the JWS signature cryptographic algorithm.
+   It also refers to a list of defined 'alg' values as part of a
    registry established by JSON Web Algorithms (JWA) [RFC7518]
    Section 3.1.
 
@@ -379,12 +384,7 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
                       Figure 1: A PAT Header Example
 
-6.  PAT Payload
 
-   The token claims consists of the policy information of the DNS server
-   which needs to be verified at the DNS client.  These claims follow
-   the definition of a JWT claim (Secion 4 of [RFC7519]) and are encoded
-   as defined by the JWS Payload (Section 3 of [RFC7515]).
 
 
 
@@ -393,6 +393,13 @@ Reddy, et al.           Expires November 19, 2020               [Page 7]
 
 Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
+
+6.  PAT Payload
+
+   The token claims consists of the policy information of the DNS server
+   which needs to be verified at the DNS client.  These claims follow
+   the definition of a JWT claim (Secion 4 of [RFC7519]) and are encoded
+   as defined by the JWS Payload (Section 3 of [RFC7515]).
 
    PAT defines the use of a standard JWT-defined claim as well as custom
    claims corresponding to the DoT or DoH servers.
@@ -431,6 +438,18 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
 6.2.  PAT Specific Claims
 
+
+
+
+
+
+
+
+Reddy, et al.           Expires November 19, 2020               [Page 8]
+
+Internet-Draft    DNS Server Info with Assertion Token          May 2020
+
+
 6.2.1.  DNS Server Identity Claims
 
    The DNS server identity is represented by a claim that is required
@@ -442,13 +461,6 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
    These identities can be represented as either authentication domain
    name (ADN) (defined in [RFC8310]) or Uniform Resource Indicators
    (URI).
-
-
-
-Reddy, et al.           Expires November 19, 2020               [Page 8]
-
-Internet-Draft    DNS Server Info with Assertion Token          May 2020
-
 
    The DNS client constructs a reference identifier for the DNS server
    based on the ADN or the domain portion in the URI of the DNS server
@@ -484,6 +496,16 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
       malware sites or objectionable content.  This optional attribute
       has the following structure:
 
+
+
+
+
+
+Reddy, et al.           Expires November 19, 2020               [Page 9]
+
+Internet-Draft    DNS Server Info with Assertion Token          May 2020
+
+
       malwareblocking:  The DNS server offers malware blocking service.
          If access to domains is blocked on threat data, the parameter
          value is set to 'true'.
@@ -498,13 +520,6 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
    privacyurl:  A URL that points to the privacy policy information of
       the DNS server.  This is a mandatory attribute.
-
-
-
-Reddy, et al.           Expires November 19, 2020               [Page 9]
-
-Internet-Draft    DNS Server Info with Assertion Token          May 2020
-
 
    auditurl:  A URL that points to the security (including privacy)
       assessment report of the DNS server by a third party auditor.
@@ -538,6 +553,15 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
    [RFC7515] (Steps 1 through 6).  PAT MUST use the JWS Protected
    Header.
 
+
+
+
+
+Reddy, et al.           Expires November 19, 2020              [Page 10]
+
+Internet-Draft    DNS Server Info with Assertion Token          May 2020
+
+
    For the JWS Payload and the JWS Protected Header, the lexicographic
    ordering and white space rules described in Section 5 and Section 6,
    and JSON serialization rules in Section 9 MUST be followed.
@@ -548,19 +572,10 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
    The policy information is attested using "Organization Validation"
    (OV) or "Extended Validation" (EV) certificates to avoid bad actors
-   taking advantage of this mechanism to advertise DoH/DoT servers for
-   illegitimate and fraudulent purposes meant to trick DNS clients into
-   believing that they are using a legitimate DoH/DoT server hosted to
-   provide privacy for DNS transactions.
-
-
-
-
-
-Reddy, et al.           Expires November 19, 2020              [Page 10]
-
-Internet-Draft    DNS Server Info with Assertion Token          May 2020
-
+   taking advantage of this mechanism to advertise encrypted DNS servers
+   for illegitimate and fraudulent purposes meant to trick DNS clients
+   into believing that they are using a legitimate encrypted DNS server
+   hosted to provide privacy for DNS transactions.
 
    Alternatively, a DNS client has to be configured to trust the leaf of
    the signer of the PAT object.  That is, trust of the signer MUST NOT
@@ -595,6 +610,14 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
    the DNS client is optional.  The creator of a PAT object cannot
    assume that the DNS client will understand the new claims.
 
+
+
+
+Reddy, et al.           Expires November 19, 2020              [Page 11]
+
+Internet-Draft    DNS Server Info with Assertion Token          May 2020
+
+
 9.  Deterministic JSON Serialization
 
    JSON objects can include spaces and line breaks, and key value pairs
@@ -609,14 +632,6 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
    1.  The JSON object MUST contain no whitespace or line breaks before
        or after any syntactic elements.
-
-
-
-
-Reddy, et al.           Expires November 19, 2020              [Page 11]
-
-Internet-Draft    DNS Server Info with Assertion Token          May 2020
-
 
    2.  JSON objects MUST have the keys ordered lexicographically by the
        Unicode [UNICODE] code points of the member names.
@@ -650,6 +665,15 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
                        Figure 3: Initial JSON Object
 
+
+
+
+
+Reddy, et al.           Expires November 19, 2020              [Page 12]
+
+Internet-Draft    DNS Server Info with Assertion Token          May 2020
+
+
    The parent members of the JSON object are as follows, in
    lexicographic order: "exp", "iat", "policyinfo", "server".
 
@@ -663,27 +687,16 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
                      Figure 4: Deterministic JSON Form
 
-
-
-
-
-
-
-Reddy, et al.           Expires November 19, 2020              [Page 12]
-
-Internet-Draft    DNS Server Info with Assertion Token          May 2020
-
-
 10.  Privacy Considerations
 
    Users are expected to indicate to their system in some way that they
    trust certain PAT signers (e.g., if working for Example, Inc., the
    user's system is configured to trust "example.com" signing the PAT).
-   By doing so, the DNS client can automatically discover DoH/DoT server
-   in specific networks, validate the PAT signature and the user can
-   check if the human readable privacy policy information of the DNS
-   server complies with user's privacy needs, prior to using that DoH/
-   DoT server for DNS queries.
+   By doing so, the DNS client can automatically discover encrypted DNS
+   server in specific networks, validate the PAT signature and the user
+   can check if the human readable privacy policy information of the DNS
+   server complies with user's privacy needs, prior to using that
+   encrypted DNS server for DNS queries.
 
    The DNS client MUST retrieve the human-readable privacy statement
    from the 'privacyurl' attribute to assist with that decision (e.g.,
@@ -692,14 +705,14 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
    review the human-readable privacy policy information of the DoH/DoT
    server.
 
-   Another scenario is bootstrapping a networking device to use the DoH/
-   DoT server in the local network.  Secure Zero Touch Provisioning
-   [RFC8572] defines a bootstrapping strategy for enabling devices to
-   securely obtain the required configuration information with no user
-   input.  If the DoH/DoT information is insecurely discovered and not
-   pre-configured in the networking device, the client can validate the
-   Policy Assertion Token signature using the owner certificate as per
-   Section 3.2 of [RFC8572].
+   Another scenario is bootstrapping a networking device to use the
+   encrypted DNS server in the local network.  Secure Zero Touch
+   Provisioning [RFC8572] defines a bootstrapping strategy for enabling
+   devices to securely obtain the required configuration information
+   with no user input.  If the encrypted DNS server is insecurely
+   discovered and not pre-configured in the networking device, the
+   client can validate the Policy Assertion Token signature using the
+   owner certificate as per Section 3.2 of [RFC8572].
 
 11.  Security Considerations
 
@@ -707,21 +720,8 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
    signature and the associated certificate requires consideration of
    the authentication and authority or reputation of the signer to
    attest the policy information of the DNS server being asserted.  Bad
-   actors can host DNS-over-TLS and DNS-over-HTTPS servers, and claim
-   the servers offer privacy but exactly do the opposite to invade the
-   privacy of the user.  Bad actor can get a domain name, host DNS-over-
-   TLS and DNS-over-HTTPS servers, and get the DNS server certificate
-   signed by a CA.  The policy information will have to be attested
-   using OV/EV certificates or a PAT object signer trusted by the DNS
-   client to prevent the attack.
-
-   The CA that issued the OV/EV certificate does not attest the resolver
-   information.  The organization hosting the DNS server attests the
-   resolver information using the OV/EV certificate and the client uses
-   the OV/EV certificate to identify the organization (e.g., ISP or
-   Enterprise) hosting the DNS server.
-
-
+   actors can host encrypted DNS servers, and claim the servers offer
+   privacy but exactly do the opposite to invade the privacy of the
 
 
 
@@ -729,6 +729,17 @@ Reddy, et al.           Expires November 19, 2020              [Page 13]
 
 Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
+
+   user.  Bad actor can get a domain name, host encrypted DNS servers,
+   and get the DNS server certificate signed by a CA.  The policy
+   information will have to be attested using OV/EV certificates or a
+   PAT object signer trusted by the DNS client to prevent the attack.
+
+   The CA that issued the OV/EV certificate does not attest the resolver
+   information.  The organization hosting the DNS server attests the
+   resolver information using the OV/EV certificate and the client uses
+   the OV/EV certificate to identify the organization (e.g., ISP or
+   Enterprise) hosting the DNS server.
 
    If the PAT object is asserted by a third party, it can do a "time of
    check" but the DNS server is susceptible of "time of use" attack.
@@ -767,6 +778,14 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
    o  Interoperability considerations: n/a
 
+
+
+
+Reddy, et al.           Expires November 19, 2020              [Page 14]
+
+Internet-Draft    DNS Server Info with Assertion Token          May 2020
+
+
    o  Published specification: [TODO this document]
 
    o  Applications that use this media type: DNS
@@ -777,14 +796,6 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
       Magic number(s): n/a File extension(s): n/a Macintosh file type
       code(s): n/a
-
-
-
-
-Reddy, et al.           Expires November 19, 2020              [Page 14]
-
-Internet-Draft    DNS Server Info with Assertion Token          May 2020
-
 
    o  Person & email address to contact for further information:
       Tirumaleswar Reddy, kondtir@gmail.com
@@ -819,17 +830,6 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
    o  Specification Document(s): Section 6.2.2 of [TODO this document]
 
-12.3.  DNS Resolver Information Registration
-
-   IANA will add the names filtering, qnameminimization, privacyurl and
-   auditurl to the DNS Resolver Information registry defined in
-   Section 4.2 of [I-D.pp-add-resinfo].
-
-13.  Acknowledgments
-
-   This specification leverages some of the work that has been done in
-   [RFC8225].  Thanks to Ted Lemon, Paul Wouters, Neil Cook and Shashank
-   Jain for the discussion and comments.
 
 
 
@@ -841,6 +841,18 @@ Reddy, et al.           Expires November 19, 2020              [Page 15]
 
 Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
+
+12.3.  DNS Resolver Information Registration
+
+   IANA will add the names filtering, qnameminimization, privacyurl and
+   auditurl to the DNS Resolver Information registry defined in
+   Section 4.2 of [I-D.pp-add-resinfo].
+
+13.  Acknowledgments
+
+   This specification leverages some of the work that has been done in
+   [RFC8225].  Thanks to Ted Lemon, Paul Wouters, Neil Cook and Shashank
+   Jain for the discussion and comments.
 
 14.  References
 
@@ -877,6 +889,15 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
               Algorithm (ECDSA)", RFC 6979, DOI 10.17487/RFC6979, August
               2013, <https://www.rfc-editor.org/info/rfc6979>.
 
+
+
+
+
+Reddy, et al.           Expires November 19, 2020              [Page 16]
+
+Internet-Draft    DNS Server Info with Assertion Token          May 2020
+
+
    [RFC7515]  Jones, M., Bradley, J., and N. Sakimura, "JSON Web
               Signature (JWS)", RFC 7515, DOI 10.17487/RFC7515, May
               2015, <https://www.rfc-editor.org/info/rfc7515>.
@@ -888,15 +909,6 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
    [RFC7519]  Jones, M., Bradley, J., and N. Sakimura, "JSON Web Token
               (JWT)", RFC 7519, DOI 10.17487/RFC7519, May 2015,
               <https://www.rfc-editor.org/info/rfc7519>.
-
-
-
-
-
-Reddy, et al.           Expires November 19, 2020              [Page 16]
-
-Internet-Draft    DNS Server Info with Assertion Token          May 2020
-
 
    [RFC7638]  Jones, M. and N. Sakimura, "JSON Web Key (JWK)
               Thumbprint", RFC 7638, DOI 10.17487/RFC7638, September
@@ -932,6 +944,16 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
               Lawrence, "Extended DNS Errors", draft-ietf-dnsop-
               extended-error-16 (work in progress), May 2020.
 
+
+
+
+
+
+Reddy, et al.           Expires November 19, 2020              [Page 17]
+
+Internet-Draft    DNS Server Info with Assertion Token          May 2020
+
+
    [I-D.ietf-dnsop-terminology-ter]
               Hoffman, P., "Terminology for DNS Transports and
               Location", draft-ietf-dnsop-terminology-ter-01 (work in
@@ -946,13 +968,6 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
               Mankin, "Recommendations for DNS Privacy Service
               Operators", draft-ietf-dprive-bcp-op-09 (work in
               progress), May 2020.
-
-
-
-Reddy, et al.           Expires November 19, 2020              [Page 17]
-
-Internet-Draft    DNS Server Info with Assertion Token          May 2020
-
 
    [I-D.pp-add-resinfo]
               Sood, P. and P. Hoffman, "DNS Resolver Information Self-
@@ -984,6 +999,17 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
    [UNICODE]  The Unicode Consortium, "The Unicode Standard", June 2016,
               <http://www.unicode.org/versions/latest/>.
 
+
+
+
+
+
+
+Reddy, et al.           Expires November 19, 2020              [Page 18]
+
+Internet-Draft    DNS Server Info with Assertion Token          May 2020
+
+
 Appendix A.  Example ES256 based PAT JWS Serialization and Signature
 
    For PAT, there will always be a JWS with the following members:
@@ -1000,15 +1026,6 @@ Appendix A.  Example ES256 based PAT JWS Serialization and Signature
 
    Step 1 for JWS references the JWS Payload, an example PAT Payload is
    as follows:
-
-
-
-
-
-Reddy, et al.           Expires November 19, 2020              [Page 18]
-
-Internet-Draft    DNS Server Info with Assertion Token          May 2020
-
 
    {
      "server":{
@@ -1037,6 +1054,18 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
    Step 2 Computes the BASE64URL(JWS Payload) producing this value (with
    line break used for display purposes only):
 
+
+
+
+
+
+
+
+Reddy, et al.           Expires November 19, 2020              [Page 19]
+
+Internet-Draft    DNS Server Info with Assertion Token          May 2020
+
+
    eyJleHAiOjE0NDM2NDAzNDUsImlhdCI6MTQ0MzIwODM0NSwicG9saWN5aW5mbyI6e
    yJmaWx0ZXJpbmciOnsibWFsd2FyZWJsb2NraW5nIjp0cnVlLCJwb2xpY3libG9ja2
    luZyI6ZmFsc2V9LCJwcml2YWN5dXJsIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9jb21
@@ -1056,15 +1085,6 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
    This would be serialized to the form (with line break used for
    display purposes only):
-
-
-
-
-
-Reddy, et al.           Expires November 19, 2020              [Page 19]
-
-Internet-Draft    DNS Server Info with Assertion Token          May 2020
-
 
    {"alg":"ES256","typ":"pat","x5u":"https://cert.example.com
    /pat.cer"}
@@ -1093,6 +1113,15 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
    following (with line breaks between period used for readability
    purposes only):
 
+
+
+
+
+Reddy, et al.           Expires November 19, 2020              [Page 20]
+
+Internet-Draft    DNS Server Info with Assertion Token          May 2020
+
+
    eyJhbGciOiJFUzI1NiIsInR5cCI6InBhdCIsIng1dSI6Imh0dHBzOi8vY2VydC5l
    eGFtcGxlLmNvbS9wYXQuY2VyIn0
    .
@@ -1112,15 +1141,6 @@ A.1.  X.509 Private Key in PKCS#8 Format for ES256 Example**
    OF/2NxApJCzGCEDdfSp6VQO30hyhRANCAAQRWz+jn65BtOMvdyHKcvjBeBSDZH2r
    1RTwjmYSi9R/zpBnuQ4EiMnCqfMPWiZqB4QdbAd0E7oH50VpuZ1P087G
    -----END PRIVATE KEY-----
-
-
-
-
-
-Reddy, et al.           Expires November 19, 2020              [Page 20]
-
-Internet-Draft    DNS Server Info with Assertion Token          May 2020
-
 
 A.2.  X.509 Public Key for ES256 Example**
 
@@ -1150,6 +1170,14 @@ Appendix B.  Complete JWS JSON Serialization Representation with
      }
    }
 
+
+
+
+Reddy, et al.           Expires November 19, 2020              [Page 21]
+
+Internet-Draft    DNS Server Info with Assertion Token          May 2020
+
+
    This would be serialized to the form (with line break used for
    display purposes only):
 
@@ -1170,13 +1198,6 @@ Appendix B.  Complete JWS JSON Serialization Representation with
      "typ":"pat",
      "x5u":"https://cert.audit-example.com/pat.cer"
    }
-
-
-
-Reddy, et al.           Expires November 19, 2020              [Page 21]
-
-Internet-Draft    DNS Server Info with Assertion Token          May 2020
-
 
    The complete JWS JSON Serialization for these values is as follows
    (with line breaks within values for display purposes only):
@@ -1202,6 +1223,17 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
 
 B.1.  X.509 Private Key in PKCS#8 format for E384 Example**
 
+
+
+
+
+
+
+Reddy, et al.           Expires November 19, 2020              [Page 22]
+
+Internet-Draft    DNS Server Info with Assertion Token          May 2020
+
+
    -----BEGIN PRIVATE KEY-----
    MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgevZzL1gdAFr88hb2
    OF/2NxApJCzGCEDdfSp6VQO30hyhRANCAAQRWz+jn65BtOMvdyHKcvjBeBSDZH2r
@@ -1226,14 +1258,6 @@ Authors' Addresses
    Email: kondtir@gmail.com
 
 
-
-
-
-Reddy, et al.           Expires November 19, 2020              [Page 22]
-
-Internet-Draft    DNS Server Info with Assertion Token          May 2020
-
-
    Dan Wing
    Citrix Systems, Inc.
    USA
@@ -1254,30 +1278,6 @@ Internet-Draft    DNS Server Info with Assertion Token          May 2020
    France
 
    Email: mohamed.boucadair@orange.com
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

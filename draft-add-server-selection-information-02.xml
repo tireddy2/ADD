@@ -89,19 +89,19 @@
 
     <abstract>
       <t>The document defines a mechanism that allows communication of DNS
-      resolver information to DNS clients for use in server selection decisions. In
-      particular, the document defines a mechanism for a DNS server to
-      communicate its filtering policy and privacy statement URL to DNS
-      clients. This information is cryptographically signed to attest its
+      resolver information to DNS clients for use in server selection
+      decisions. In particular, the document defines a mechanism for a DNS
+      server to communicate its filtering policy and privacy statement URL to
+      DNS clients. This information is cryptographically signed to attest its
       authenticity. Such information is used for the selection of DNS
       resolvers. Typically, evaluating the DNS privacy statement, filtering
       policy, and the signatory, DNS clients with minimum human intervention
       can select the DNS server that best supports the user's desired privacy
       and filtering policy.</t>
 
-      <t>This assertion is useful for encrypted DNS (e.g., DNS-over-TLS and DNS-over-HTTPS) servers
-      that are either public resolvers or are discovered in a local
-      network.</t>
+      <t>This assertion is useful for encrypted DNS (e.g., DNS-over-TLS and
+      DNS-over-HTTPS) servers that are either public resolvers or are
+      discovered in a local network.</t>
     </abstract>
   </front>
 
@@ -110,20 +110,20 @@
       <t><xref target="RFC7626"></xref> discusses DNS privacy considerations
       in both "on the wire" (Section 2.4 of <xref target="RFC7626"></xref>)
       and "in the server" (Section 2.5 of <xref target="RFC7626"></xref>)
-      contexts. Examples of protocols that provide encrypted channels between DNS
-      clients and servers are DNS-over-HTTPS (DoH) <xref
+      contexts. Examples of protocols that provide encrypted channels between
+      DNS clients and servers are DNS-over-HTTPS (DoH) <xref
       target="RFC8484"></xref> and DNS-over-TLS (DoT) <xref
       target="RFC7858"></xref>.</t>
 
-      <t>DNS clients can discover and authenticate encrypted DNS (e.g., DoH and DoT) servers
-      provided by a local network, for example using the techniques proposed
-      in <xref target="I-D.btw-add-home"></xref>. If the mechanism used to
-      discover the encrypted DNS server is insecure, the DNS client needs evidence
-      about the encrypted server to assess its trustworthiness and a way to
-      appraise such evidence. The mechanism specified in this document can be
-      used by the DNS client to cryptographically identify it is connecting to
-      an encrypted DNS server hosted by a specific organization (e.g., ISP or
-      Enterprise).</t>
+      <t>DNS clients can discover and authenticate encrypted DNS (e.g., DoH
+      and DoT) servers provided by a local network, for example using the
+      techniques proposed in <xref target="I-D.btw-add-home"></xref>. If the
+      mechanism used to discover the encrypted DNS server is insecure, the DNS
+      client needs evidence about the encrypted server to assess its
+      trustworthiness and a way to appraise such evidence. The mechanism
+      specified in this document can be used by the DNS client to
+      cryptographically identify it is connecting to an encrypted DNS server
+      hosted by a specific organization (e.g., ISP or Enterprise).</t>
 
       <t>The DNS Recursive Operator Privacy (DROP) statement explained in
       <xref target="I-D.ietf-dprive-bcp-op"></xref> outlines the recommended
@@ -167,10 +167,10 @@
       <t>The mechanism for a DNS server to communicate its cryptographically
       signed policies to DNS clients contributes to solve the following
       problems in various deployments:<list style="symbols">
-          <t>The encrypted DNS server advertised using DHCP/RA in Home and Mobile
-          networks is insecure, the mechanism specified in this document can
-          be used by the DNS client to validate the signatory (e.g.,
-          cryptographically attested by the ISP).</t>
+          <t>The encrypted DNS server advertised using DHCP/RA in Home and
+          Mobile networks is insecure, the mechanism specified in this
+          document can be used by the DNS client to validate the signatory
+          (e.g., cryptographically attested by the ISP).</t>
 
           <t>Typically Enterprise networks do not assume that all devices in
           their network are managed by the IT team or Mobile Device Management
@@ -183,21 +183,21 @@
           <t>The user selects specific well-known networks (e.g., organization
           for which a user works or a user works temporarily within another
           corporation) to learn the privacy policy statement and filtering
-          policy of the local DNS server. If the discovered encrypted DNS server
-          does not meet the privacy preserving data policy and filtering
-          requirements of the user, the DNS client can take appropriate
-          actions. For example, the action can be to use the discovered DNS
-          server only to access internal-only DNS names and use another DNS
-          server (adhering with the user's expectations) for public
-          domains.</t>
+          policy of the local DNS server. If the discovered encrypted DNS
+          server does not meet the privacy preserving data policy and
+          filtering requirements of the user, the DNS client can take
+          appropriate actions. For example, the action can be to use the
+          discovered DNS server only to access internal-only DNS names and use
+          another DNS server (adhering with the user's expectations) for
+          public domains.</t>
 
           <t>The policy information signals the presence of DNS-based content
           filtering in the attached network. If the network is well-known to
           the DNS client and the local DNS server meets the privacy
           requirements of the user, the DNS client can continue to use
-          encrypted connection with the local encrypted DNS server. If the error
-          code returned by the DNS server indicates access to the domain is
-          blocked because of internal security policy <xref
+          encrypted connection with the local encrypted DNS server. If the
+          error code returned by the DNS server indicates access to the domain
+          is blocked because of internal security policy <xref
           target="I-D.ietf-dnsop-extended-error"></xref>, the DNS client can
           securely identify access to the domain is censored by the
           network.</t>
@@ -232,8 +232,9 @@
       target="I-D.ietf-dnsop-terminology-ter"></xref>.</t>
 
       <t>'DoH/DoT' refers to DNS-over-HTTPS and/or DNS-over-TLS.</t>
-      <t>'Encrypted DNS' refers to a DNS protocol that provides an encrypted channel between a DNS client and server (e.g., DoT or DoH).</t>
-         
+
+      <t>'Encrypted DNS' refers to a DNS protocol that provides an encrypted
+      channel between a DNS client and server (e.g., DoT or DoH).</t>
     </section>
 
     <section anchor="PAT" title="Policy Assertion Token (PAT): Overview">
@@ -396,7 +397,7 @@
           required for PAT: the 'server' claim. The 'server' MUST contain
           claim values that are identity claim JSON objects where the child
           claim name represents an identity type and the claim value is the
-          identity string, both defined in subsequent subsections. </t>
+          identity string, both defined in subsequent subsections.</t>
 
           <t>These identities can be represented as either authentication
           domain name (ADN) (defined in <xref target="RFC8310"></xref>) or
@@ -509,10 +510,10 @@
 
       <t>The policy information is attested using "Organization Validation"
       (OV) or "Extended Validation" (EV) certificates to avoid bad actors
-      taking advantage of this mechanism to advertise encrypted DNS servers for
-      illegitimate and fraudulent purposes meant to trick DNS clients into
-      believing that they are using a legitimate encrypted DNS server hosted to
-      provide privacy for DNS transactions.</t>
+      taking advantage of this mechanism to advertise encrypted DNS servers
+      for illegitimate and fraudulent purposes meant to trick DNS clients into
+      believing that they are using a legitimate encrypted DNS server hosted
+      to provide privacy for DNS transactions.</t>
 
       <t>Alternatively, a DNS client has to be configured to trust the leaf of
       the signer of the PAT object. That is, trust of the signer MUST NOT be
@@ -627,11 +628,11 @@
       <t>Users are expected to indicate to their system in some way that they
       trust certain PAT signers (e.g., if working for Example, Inc., the
       user's system is configured to trust "example.com" signing the PAT). By
-      doing so, the DNS client can automatically discover encrypted DNS server in
-      specific networks, validate the PAT signature and the user can check if
-      the human readable privacy policy information of the DNS server complies
-      with user's privacy needs, prior to using that encrypted DNS server for DNS
-      queries.</t>
+      doing so, the DNS client can automatically discover encrypted DNS server
+      in specific networks, validate the PAT signature and the user can check
+      if the human readable privacy policy information of the DNS server
+      complies with user's privacy needs, prior to using that encrypted DNS
+      server for DNS queries.</t>
 
       <t>The DNS client MUST retrieve the human-readable privacy statement
       from the 'privacyurl' attribute to assist with that decision (e.g.,
@@ -641,13 +642,14 @@
       server.</t>
 
       <t>Another scenario is bootstrapping a networking device to use the
-      encrypted DNS server in the local network. Secure Zero Touch Provisioning
-      <xref target="RFC8572"></xref> defines a bootstrapping strategy for
-      enabling devices to securely obtain the required configuration
-      information with no user input. If the encrypted DNS information is insecurely
-      discovered and not pre-configured in the networking device, the client
-      can validate the Policy Assertion Token signature using the owner
-      certificate as per Section 3.2 of <xref target="RFC8572"></xref>.</t>
+      encrypted DNS server in the local network. Secure Zero Touch
+      Provisioning <xref target="RFC8572"></xref> defines a bootstrapping
+      strategy for enabling devices to securely obtain the required
+      configuration information with no user input. If the encrypted DNS
+      server is insecurely discovered and not pre-configured in the networking
+      device, the client can validate the Policy Assertion Token signature
+      using the owner certificate as per Section 3.2 of <xref
+      target="RFC8572"></xref>.</t>
     </section>
 
     <section anchor="Security" title="Security Considerations">
@@ -655,12 +657,12 @@
       signature and the associated certificate requires consideration of the
       authentication and authority or reputation of the signer to attest the
       policy information of the DNS server being asserted. Bad actors can host
-      encrypted DNS servers, and claim the servers offer
-      privacy but exactly do the opposite to invade the privacy of the user.
-      Bad actor can get a domain name, host encrypted DNS
-      servers, and get the DNS server certificate signed by a CA. The policy
-      information will have to be attested using OV/EV certificates or a PAT
-      object signer trusted by the DNS client to prevent the attack. </t>
+      encrypted DNS servers, and claim the servers offer privacy but exactly
+      do the opposite to invade the privacy of the user. Bad actor can get a
+      domain name, host encrypted DNS servers, and get the DNS server
+      certificate signed by a CA. The policy information will have to be
+      attested using OV/EV certificates or a PAT object signer trusted by the
+      DNS client to prevent the attack.</t>
 
       <t>The CA that issued the OV/EV certificate does not attest the resolver
       information. The organization hosting the DNS server attests the
