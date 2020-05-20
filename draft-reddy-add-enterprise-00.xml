@@ -183,8 +183,8 @@
       management tool in an Enterprise. For example, customizing Firefox using
       Group Policy to use the Enterprise DoH server is discussed in <xref
       target="Firefox-Policy"></xref> for Windows and MacOS, and setting
-      Chrome policies is discussed in <xref
-      target="Chrome-Policy"></xref>.</t>
+      Chrome policies is discussed in <xref target="Chrome-Policy"></xref> and
+      <xref target="Chrome-DoH"></xref>.</t>
     </section>
 
     <section title="IoT Devices">
@@ -463,6 +463,19 @@
                  target="https://support.google.com/chrome/a/answer/2657289?hl=en">
         <front>
           <title>Chrome policies for users or browsers</title>
+
+          <author>
+            <organization>The Unicode Consortium</organization>
+          </author>
+
+          <date day="" month="" year="" />
+        </front>
+      </reference>
+
+      <reference anchor="Chrome-DoH"
+                 target="https://www.chromium.org/developers/dns-over-https">
+        <front>
+          <title>Chrome DNS over HTTPS (aka DoH)</title>
 
           <author>
             <organization>The Unicode Consortium</organization>

@@ -186,7 +186,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
    management tool in an Enterprise.  For example, customizing Firefox
    using Group Policy to use the Enterprise DoH server is discussed in
    [Firefox-Policy] for Windows and MacOS, and setting Chrome policies
-   is discussed in [Chrome-Policy].
+   is discussed in [Chrome-Policy] and [Chrome-DoH].
 
 4.  IoT Devices
 
@@ -419,6 +419,10 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 9.2.  Informative References
 
+   [Chrome-DoH]
+              The Unicode Consortium, "Chrome DNS over HTTPS (aka DoH)",
+              <https://www.chromium.org/developers/dns-over-https>.
+
    [Chrome-Policy]
               The Unicode Consortium, "Chrome policies for users or
               browsers", <https://support.google.com/chrome/a/
@@ -438,10 +442,6 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
               "Policy templates for Firefox",
               <https://github.com/mozilla/policy-templates/blob/master/
               README.md#dnsoverhttps>.
-
-
-
-
 
 
 
