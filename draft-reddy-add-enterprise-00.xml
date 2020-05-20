@@ -311,6 +311,13 @@
           mode</xref> or <xref target="Chromebook">Chromebook</xref>, where
           applications are sandboxed (e.g., ransomware attack is not possbile)
           and applications can only be installed via the OS store.</t>
+
+          <t>If a roaming endpoint connects to the Enterprise network through
+          an IPsec tunnel (Section 1.1.3 of <xref target="RFC7296"></xref>),
+          the DoH/DoT server hosted by the Enterprise network can be securely
+          discovered by the endpoint using the INTERNAL_ENC_DNS IKEv2
+          Configuration Payload Attribute Type defined in <xref
+          target="I-D.btw-add-ipsecme-ike"></xref>. </t>
         </list></t>
     </section>
 
@@ -344,8 +351,8 @@
     </section>
 
     <section title="Acknowledgements">
-      <t>Thanks to Mohamed Boucadair and Eliot Lear for the discussion and
-      comments.</t>
+      <t>Thanks to Mohamed Boucadair, Sandeep Rao and Eliot Lear for the
+      discussion and comments.</t>
     </section>
   </middle>
 
@@ -381,9 +388,13 @@
 
       <?rfc include='reference.RFC.4764' ?>
 
+      <?rfc include='reference.RFC.7296' ?>
+
       <?rfc include='reference.I-D.ietf-anima-bootstrapping-keyinfra'?>
 
       <?rfc include='reference.I-D.reddy-add-server-policy-selection'?>
+
+      <?rfc include='reference.I-D.btw-add-ipsecme-ike'?>
 
       <?rfc include='reference.I-D.btw-add-home'?>
 

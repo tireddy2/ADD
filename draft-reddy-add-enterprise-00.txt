@@ -5,8 +5,8 @@
 ADD                                                             T. Reddy
 Internet-Draft                                                    McAfee
 Intended status: Informational                                   D. Wing
-Expires: November 14, 2020                                        Citrix
-                                                            May 13, 2020
+Expires: November 21, 2020                                        Citrix
+                                                            May 20, 2020
 
 
   DNS-over-HTTPS and DNS-over-TLS Server Deployment Considerations for
@@ -38,7 +38,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on November 14, 2020.
+   This Internet-Draft will expire on November 21, 2020.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Reddy & Wing            Expires November 14, 2020               [Page 1]
+Reddy & Wing            Expires November 21, 2020               [Page 1]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Reddy & Wing            Expires November 14, 2020               [Page 2]
+Reddy & Wing            Expires November 21, 2020               [Page 2]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -165,7 +165,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-Reddy & Wing            Expires November 14, 2020               [Page 3]
+Reddy & Wing            Expires November 21, 2020               [Page 3]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -221,7 +221,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-Reddy & Wing            Expires November 14, 2020               [Page 4]
+Reddy & Wing            Expires November 21, 2020               [Page 4]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -277,7 +277,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 
 
-Reddy & Wing            Expires November 14, 2020               [Page 5]
+Reddy & Wing            Expires November 21, 2020               [Page 5]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
@@ -327,16 +327,19 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
       attack is not possbile) and applications can only be installed via
       the OS store.
 
+   o  If a roaming endpoint connects to the Enterprise network through
+      an IPsec tunnel (Section 1.1.3 of [RFC7296]), the DoH/DoT server
+      hosted by the Enterprise network can be securely discovered by the
 
 
 
-
-
-
-Reddy & Wing            Expires November 14, 2020               [Page 6]
+Reddy & Wing            Expires November 21, 2020               [Page 6]
 
 Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
+
+      endpoint using the INTERNAL_ENC_DNS IKEv2 Configuration Payload
+      Attribute Type defined in [I-D.btw-add-ipsecme-ike].
 
 6.  Security Considerations
 
@@ -368,8 +371,8 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
 8.  Acknowledgements
 
-   Thanks to Mohamed Boucadair and Eliot Lear for the discussion and
-   comments.
+   Thanks to Mohamed Boucadair, Sandeep Rao and Eliot Lear for the
+   discussion and comments.
 
 9.  References
 
@@ -382,17 +385,19 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
               Devices", draft-reddy-add-iot-byod-bootstrap-00 (work in
               progress), May 2020.
 
+
+
+
+
+Reddy & Wing            Expires November 21, 2020               [Page 7]
+
+Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
+
+
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
-
-
-
-Reddy & Wing            Expires November 14, 2020               [Page 7]
-
-Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
-
 
    [RFC7858]  Hu, Z., Zhu, L., Heidemann, J., Mankin, A., Wessels, D.,
               and P. Hoffman, "Specification for DNS over Transport
@@ -434,27 +439,33 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
               <https://github.com/mozilla/policy-templates/blob/master/
               README.md#dnsoverhttps>.
 
+
+
+
+
+
+
+Reddy & Wing            Expires November 21, 2020               [Page 8]
+
+Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
+
+
    [I-D.arkko-farrell-arch-model-t]
               Arkko, J. and S. Farrell, "Challenges and Changes in the
               Internet Threat Model", draft-arkko-farrell-arch-model-
               t-03 (work in progress), March 2020.
 
-
-
-
-
-
-
-Reddy & Wing            Expires November 14, 2020               [Page 8]
-
-Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
-
-
    [I-D.btw-add-home]
-              Boucadair, M., Reddy.K, T., Wing, D., and N. Cook, "DNS-
-              over-HTTPS and DNS-over-TLS Server Discovery and
-              Deployment Considerations for Home Networks", draft-btw-
-              add-home-05 (work in progress), April 2020.
+              Boucadair, M., Reddy.K, T., Wing, D., and N. Cook,
+              "Encrypted DNS Discovery and Deployment Considerations for
+              Home Networks", draft-btw-add-home-06 (work in progress),
+              May 2020.
+
+   [I-D.btw-add-ipsecme-ike]
+              Boucadair, M., Reddy.K, T., Wing, D., and V. Smyslov,
+              "Internet Key Exchange Protocol Version 2 (IKEv2)
+              Configuration for Encrypted DNS", draft-btw-add-ipsecme-
+              ike-00 (work in progress), April 2020.
 
    [I-D.ietf-anima-bootstrapping-keyinfra]
               Pritikin, M., Richardson, M., Eckert, T., Behringer, M.,
@@ -483,6 +494,18 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
               <https://openconnectivity.org/specs/
               OCF_Security_Specification_v1.0.0.pdf>.
 
+
+
+
+
+
+
+
+Reddy & Wing            Expires November 21, 2020               [Page 9]
+
+Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
+
+
    [oma]      Open Mobile Alliance, "Lightweight Machine to Machine
               Technical Specification: Core", Open Mobile Alliance ,
               June 2019,
@@ -494,17 +517,6 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
               developer.apple.com/library/archive/documentation/Networki
               ngInternet/Conceptual/iPhoneOTAConfiguration/OTASecurity/
               OTASecurity.html>.
-
-
-
-
-
-
-
-Reddy & Wing            Expires November 14, 2020               [Page 9]
-
-Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
-
 
    [PEAP]     Microsoft, "[MS-PEAP]: Protected Extensible Authentication
               Protocol (PEAP)", <https://docs.microsoft.com/en-
@@ -526,6 +538,11 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
               1", RFC 7170, DOI 10.17487/RFC7170, May 2014,
               <https://www.rfc-editor.org/info/rfc7170>.
 
+   [RFC7296]  Kaufman, C., Hoffman, P., Nir, Y., Eronen, P., and T.
+              Kivinen, "Internet Key Exchange Protocol Version 2
+              (IKEv2)", STD 79, RFC 7296, DOI 10.17487/RFC7296, October
+              2014, <https://www.rfc-editor.org/info/rfc7296>.
+
    [RFC7626]  Bortzmeyer, S., "DNS Privacy Considerations", RFC 7626,
               DOI 10.17487/RFC7626, August 2015,
               <https://www.rfc-editor.org/info/rfc7626>.
@@ -537,6 +554,13 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
    [RFC8499]  Hoffman, P., Sullivan, A., and K. Fujiwara, "DNS
               Terminology", BCP 219, RFC 8499, DOI 10.17487/RFC8499,
               January 2019, <https://www.rfc-editor.org/info/rfc8499>.
+
+
+
+Reddy & Wing            Expires November 21, 2020              [Page 10]
+
+Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
+
 
    [RFC8520]  Lear, E., Droms, R., and D. Romascanu, "Manufacturer Usage
               Description Specification", RFC 8520,
@@ -550,17 +574,6 @@ Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
 
    [win10s]   Microsoft, "Windows 10 in S mode",
               <https://www.microsoft.com/en-us/windows/s-mode>.
-
-
-
-
-
-
-
-Reddy & Wing            Expires November 14, 2020              [Page 10]
-
-Internet-Draft       DoH/DoT in Enterprise Networks             May 2020
-
 
 Authors' Addresses
 
@@ -600,17 +613,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-Reddy & Wing            Expires November 14, 2020              [Page 11]
+Reddy & Wing            Expires November 21, 2020              [Page 11]
