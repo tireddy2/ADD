@@ -270,7 +270,7 @@
 
     <section title="BYOD">
       <t>The following mechanisms can be used to bootstrap BYOD (bring your
-      own device) :</t>
+      own device) with the DoH/DoT server used by the Enterprise network:</t>
 
       <t><list style="symbols">
           <t>If mobile device management (MDM) <xref
@@ -311,14 +311,31 @@
           mode</xref> or <xref target="Chromebook">Chromebook</xref>, where
           applications are sandboxed (e.g., ransomware attack is not possbile)
           and applications can only be installed via the OS store.</t>
-
-          <t>If a roaming endpoint connects to the Enterprise network through
-          an IPsec tunnel (Section 1.1.3 of <xref target="RFC7296"></xref>),
-          the DoH/DoT server hosted by the Enterprise network can be securely
-          discovered by the endpoint using the INTERNAL_ENC_DNS IKEv2
-          Configuration Payload Attribute Type defined in <xref
-          target="I-D.btw-add-ipsecme-ike"></xref>. </t>
         </list></t>
+
+      <t>The DoH/DoT server used by the Enterprise network may or may not be
+      globally accessible. The BYOD may use the discovered DoH/DoT server only
+      when connected to the Enterprise network. </t>
+    </section>
+
+    <section anchor="VPN" title="Roaming Enterprise Users">
+      <t>In this Enterprise scenario (Section 1.1.3 of <xref
+      target="RFC7296"></xref>), a roaming user connects to the Enterprise
+      network through an IPsec tunnel. The split-tunnel Virtual Private
+      Network (VPN) configuration allows the endpoint to access hosts that
+      resides in the Enterprise network <xref target="RFC8598"></xref> using
+      that tunnel; other traffic not destined to the Enterprise does not
+      traverse the tunnel. In contrast, a non-split- tunnel VPN configuration
+      causes all traffic to traverse the tunnel into the enterprise. </t>
+
+      <t>The DoH/DoT server hosted by the Enterprise network can be securely
+      discovered by the endpoint using the INTERNAL_ENC_DNS IKEv2
+      Configuration Payload Attribute Type defined in <xref
+      target="I-D.btw-add-ipsecme-ike"></xref>. For split-tunnel VPN
+      configurations, the endpoint uses the Enterprise-provided DoT/DoH server
+      to resolve internal-only domain names. For non-split-tunnel VPN
+      configurations, the endpoint uses the Enterprise-provided DoT/DoH server
+      to resolve both internal and external domain names. </t>
     </section>
 
     <section anchor="Security" title="Security Considerations">
@@ -375,6 +392,8 @@
 
     <references title="Informative References">
       <?rfc include='reference.RFC.8499'?>
+
+      <?rfc include='reference.RFC.8598'?>
 
       <?rfc include='reference.RFC.8520'?>
 
