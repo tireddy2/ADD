@@ -344,10 +344,12 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
    The DoH/DoT server used by the Enterprise network may or may not be
    globally accessible.  The BYOD may use the discovered DoH/DoT server
    only when connected to the Enterprise network.  If the BYOD device
-   only uses the local DNS server to resolve internal-only domains,
-   Provisioning Domains (PvDs) defined in
-   [I-D.ietf-intarea-provisioning-domains] can be extended to convey the
-   internal-only domain names.
+   only uses the local DNS server to resolve internal-only domains, the
+   client can learn about domains for which the local network's resolver
+   is authoritative using the explicit Provisioning Domains (PvDs)
+   defined in [I-D.ietf-intarea-provisioning-domains].  The domains that
+   the DoH server claims authority for are listed in the "dnsZones" key
+   defined in Section 4.3 of [I-D.ietf-intarea-provisioning-domains].
 
 6.  Roaming Enterprise Users
 
@@ -383,8 +385,6 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
    The DNS client can validate the signatory (i.e., cryptographically
    attested by the Organization hosting the DoH/DoT server) and the user
    can review human-readable privacy policy information of the DNS
-   server and assess whether the DNS server performs DNS-based content
-   filtering.
 
 
 
@@ -393,6 +393,9 @@ Reddy & Wing            Expires December 4, 2020                [Page 7]
 
 Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
+
+   server and assess whether the DNS server performs DNS-based content
+   filtering.
 
    If the discovered DoH/DoT server does not meet the privacy preserving
    data policy and filtering requirements of the user, the user can
@@ -439,9 +442,6 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
               for DNS over TLS and DNS over DTLS", RFC 8310,
               DOI 10.17487/RFC8310, March 2018,
               <https://www.rfc-editor.org/info/rfc8310>.
-
-
-
 
 
 

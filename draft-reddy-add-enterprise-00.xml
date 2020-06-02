@@ -316,10 +316,13 @@
       <t>The DoH/DoT server used by the Enterprise network may or may not be
       globally accessible. The BYOD may use the discovered DoH/DoT server only
       when connected to the Enterprise network. If the BYOD device only uses
-      the local DNS server to resolve internal-only domains, Provisioning
-      Domains (PvDs) defined in <xref
-      target="I-D.ietf-intarea-provisioning-domains"></xref> can be extended
-      to convey the internal-only domain names. </t>
+      the local DNS server to resolve internal-only domains, the client can
+      learn about domains for which the local network's resolver is
+      authoritative using the explicit Provisioning Domains (PvDs) defined in
+      <xref target="I-D.ietf-intarea-provisioning-domains"></xref>. The
+      domains that the DoH server claims authority for are listed in the
+      "dnsZones" key defined in Section 4.3 of <xref
+      target="I-D.ietf-intarea-provisioning-domains"></xref>. </t>
     </section>
 
     <section anchor="VPN" title="Roaming Enterprise Users">
@@ -330,7 +333,7 @@
       resides in the Enterprise network <xref target="RFC8598"></xref> using
       that tunnel; other traffic not destined to the Enterprise does not
       traverse the tunnel. In contrast, a non-split- tunnel VPN configuration
-      causes all traffic to traverse the tunnel into the enterprise. </t>
+      causes all traffic to traverse the tunnel into the enterprise.</t>
 
       <t>The DoH/DoT server hosted by the Enterprise network can be securely
       discovered by the endpoint using the INTERNAL_ENC_DNS IKEv2
@@ -339,7 +342,7 @@
       configurations, the endpoint uses the Enterprise-provided DoT/DoH server
       to resolve internal-only domain names. For non-split-tunnel VPN
       configurations, the endpoint uses the Enterprise-provided DoT/DoH server
-      to resolve both internal and external domain names. </t>
+      to resolve both internal and external domain names.</t>
     </section>
 
     <section anchor="Security" title="Security Considerations">
