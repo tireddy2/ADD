@@ -315,7 +315,11 @@
 
       <t>The DoH/DoT server used by the Enterprise network may or may not be
       globally accessible. The BYOD may use the discovered DoH/DoT server only
-      when connected to the Enterprise network. </t>
+      when connected to the Enterprise network. If the BYOD device only uses
+      the local DNS server to resolve internal-only domains, Provisioning
+      Domains (PvDs) defined in <xref
+      target="I-D.ietf-intarea-provisioning-domains"></xref> can be extended
+      to convey the internal-only domain names. </t>
     </section>
 
     <section anchor="VPN" title="Roaming Enterprise Users">
@@ -412,6 +416,8 @@
       <?rfc include='reference.I-D.ietf-anima-bootstrapping-keyinfra'?>
 
       <?rfc include='reference.I-D.reddy-add-server-policy-selection'?>
+
+      <?rfc include='reference.I-D.ietf-intarea-provisioning-domains'?>
 
       <?rfc include='reference.I-D.btw-add-ipsecme-ike'?>
 
