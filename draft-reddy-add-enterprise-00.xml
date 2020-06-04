@@ -157,7 +157,8 @@
       not accessible for inspection, it becomes quite difficult for the
       infrastructure to suspect anything.</t>
 
-      <t>This document focuses on Enterprise networks, DoH/DoT sever discovery
+      <t>This document focuses on DoH/DoT deployment considerations for
+      Enterprise networks, DoH/DoT sever discovery and deployment
       considerations for home networks are discussed in <xref
       target="I-D.btw-add-home"></xref>.</t>
     </section>
@@ -188,18 +189,20 @@
     </section>
 
     <section title="IoT Devices">
-      <t>IoT devices require agentless or standardized approaches. The basis
-      for trust, therefore, is quite different from that of a laptop, tablet,
-      or smart phone. The following bootstrapping mechanisms can be used to
-      securely provision IoT devices to use Enterprise provided DoT and DoH
-      servers:<list style="symbols">
+      <t>The solution described in this document is aimed in general at
+      non-constrained IoT devices (i.e., class 2+ <xref
+      target="RFC7228"></xref>) operating on a Enterprise network without a
+      device management tool and require agentless or standardized approaches.
+      The basis for trust, therefore, is quite different from that of a
+      laptop, tablet, or smart phone. The following bootstrapping mechanisms
+      can be used to securely provision IoT devices to use Enterprise provided
+      DoT and DoH servers:<list style="symbols">
           <t>IoT devices supporting Bootstrapping Remote Secure Key
           Infrastructures (BRSKI) discussed in <xref
           target="I-D.ietf-anima-bootstrapping-keyinfra"></xref> can be
           bootstrapped with the Enterprise-provided DoH/DoT servers using the
           mechanism discussed in Section 5 of <xref
-          target="I-D.reddy-add-iot-byod-bootstrap"></xref>. This approach is
-          useful for cloud-based onboarding of IoT devices.</t>
+          target="I-D.reddy-add-iot-byod-bootstrap"></xref>. </t>
 
           <t><xref target="RFC8572"></xref> defines a bootstrapping strategy
           for enabling devices to securely obtain the required configuration
@@ -233,10 +236,13 @@
               mechanism discussed in Section 4 of <xref
               target="I-D.reddy-add-iot-byod-bootstrap"></xref> may be used to
               securely bootstrap IoT device with the authentication domain
-              name (ADN) and DNS server certificate of the local
-              network&rsquo;s DoH/ DoT server. It uses password-based
-              authenticated key exchange (PAKE) scheme to authenticate the EST
-              server and fetch the DoH/DoT server certificate.</t>
+              name (ADN) and DNS server certificate of the local network's
+              DoH/ DoT server. It uses password-based authenticated key
+              exchange (PAKE) scheme to authenticate the EST server and fetch
+              the DoH/DoT server certificate. Note that provisioning massive
+              number of IoT devices with PSK is not a scalable onboarding
+              mechanism but will work in Small Office/Home Office (SOHO) and
+              Small/Medium Enterprise (SME). </t>
             </list></t>
 
           <t>If Device Provisioning Protocol (DPP) <xref target="dpp"></xref>
@@ -264,7 +270,7 @@
 
       <t>This document does not discuss opportunistic or leap-of-faith
       bootstrapping methods, they are susceptible to security issues (e.g.,
-      IoT device can be configured with the attacker&rsquo;s DoH/DoT server or
+      IoT device can be configured with the attacker's DoH/DoT server or
       disable the use of DoH/DoT).</t>
     </section>
 
@@ -313,36 +319,51 @@
           and applications can only be installed via the OS store.</t>
         </list></t>
 
-      <t>The DoH/DoT server used by the Enterprise network may or may not be
-      globally accessible. The BYOD may use the discovered DoH/DoT server only
-      when connected to the Enterprise network. If the BYOD device only uses
-      the local DNS server to resolve internal-only domains, the client can
-      learn about domains for which the local network's resolver is
-      authoritative using the explicit Provisioning Domains (PvDs) defined in
-      <xref target="I-D.ietf-intarea-provisioning-domains"></xref>. The
-      domains that the DoH server claims authority for are listed in the
-      "dnsZones" key defined in Section 4.3 of <xref
-      target="I-D.ietf-intarea-provisioning-domains"></xref>. </t>
+      <t>When attached to the enterprise network yet needing to use the
+      enterprise's DoH server only to access the internal-only DNS names, the
+      client device can learn about domains for which the local network's
+      resolver is authoritative via dnsZones key defined in Section 4.3 of
+      <xref target="I-D.ietf-intarea-provisioning-domains"></xref> (as other
+      DoH/DoT servers will be unaware of the internal-only DNS names).</t>
     </section>
 
     <section anchor="VPN" title="Roaming Enterprise Users">
-      <t>In this Enterprise scenario (Section 1.1.3 of <xref
-      target="RFC7296"></xref>), a roaming user connects to the Enterprise
-      network through an IPsec tunnel. The split-tunnel Virtual Private
-      Network (VPN) configuration allows the endpoint to access hosts that
-      resides in the Enterprise network <xref target="RFC8598"></xref> using
-      that tunnel; other traffic not destined to the Enterprise does not
-      traverse the tunnel. In contrast, a non-split- tunnel VPN configuration
-      causes all traffic to traverse the tunnel into the enterprise.</t>
+      <section title="VPN tunnel">
+        <t>In this Enterprise scenario (Section 1.1.3 of <xref
+        target="RFC7296"></xref>), a roaming user connects to the Enterprise
+        network through an VPN tunnel (e.g., IPsec, SSL, Wireguard). The
+        split-tunnel Virtual Private Network (VPN) configuration allows the
+        endpoint to access hosts that reside in the Enterprise network <xref
+        target="RFC8598"></xref> using that tunnel; other traffic not destined
+        to the Enterprise does not traverse the tunnel. In contrast, a
+        non-split- tunnel VPN configuration causes all traffic to traverse the
+        tunnel into the enterprise.</t>
 
-      <t>The DoH/DoT server hosted by the Enterprise network can be securely
-      discovered by the endpoint using the INTERNAL_ENC_DNS IKEv2
-      Configuration Payload Attribute Type defined in <xref
-      target="I-D.btw-add-ipsecme-ike"></xref>. For split-tunnel VPN
-      configurations, the endpoint uses the Enterprise-provided DoT/DoH server
-      to resolve internal-only domain names. For non-split-tunnel VPN
-      configurations, the endpoint uses the Enterprise-provided DoT/DoH server
-      to resolve both internal and external domain names.</t>
+        <t>When the VPN tunnel is IPsec, The DoH/DoT server hosted by the
+        Enterprise network can be securely discovered by the endpoint using
+        the INTERNAL_ENC_DNS IKEv2 Configuration Payload Attribute Type
+        defined in <xref target="I-D.btw-add-ipsecme-ike"></xref>. For
+        split-tunnel VPN configurations, the endpoint uses the
+        Enterprise-provided DoT/DoH server to resolve internal-only domain
+        names. For non-split-tunnel VPN configurations, the endpoint uses the
+        Enterprise-provided DoT/DoH server to resolve both internal and
+        external domain names.</t>
+
+        <t>Other VPN tunnel types have similar configuration capabilities, not
+        detailed here.</t>
+      </section>
+
+      <section title="Client Authentication">
+        <t>When not on the local enterprise network (e.g., at home or coffee
+        shop) yet needing to access the enterprise DoH/DoT server but not
+        through a tunnel, roaming users can use client authentication to
+        access the Enterprise provided DoH/DoT server. For example, Firefox
+        DoH setting accepts user credentials <xref
+        target="Firefox-TRR"></xref> (network.trr. credentials) to
+        authenticate the client to access the DoH server. The exact client
+        authentication mechanism to authenticate to the DoH/DoT server is
+        outside the scope of this specification.</t>
+      </section>
     </section>
 
     <section anchor="Security" title="Security Considerations">
@@ -375,8 +396,8 @@
     </section>
 
     <section title="Acknowledgements">
-      <t>Thanks to Mohamed Boucadair, Sandeep Rao and Eliot Lear for the
-      discussion and comments.</t>
+      <t>Thanks to Mohamed Boucadair, Sandeep Rao, Vinny Parla, Nancy
+      Cam-Winget and Eliot Lear for the discussion and comments.</t>
     </section>
   </middle>
 
@@ -416,6 +437,8 @@
 
       <?rfc include='reference.RFC.7296' ?>
 
+      <?rfc include='reference.RFC.7228' ?>
+
       <?rfc include='reference.I-D.ietf-anima-bootstrapping-keyinfra'?>
 
       <?rfc include='reference.I-D.reddy-add-server-policy-selection'?>
@@ -434,6 +457,17 @@
                  target="https://github.com/mozilla/policy-templates/blob/master/README.md#dnsoverhttps">
         <front>
           <title>Policy templates for Firefox</title>
+
+          <author></author>
+
+          <date day="" month="" year="" />
+        </front>
+      </reference>
+
+      <reference anchor="Firefox-TRR"
+                 target="https://wiki.mozilla.org/Trusted_Recursive_Resolver">
+        <front>
+          <title>Trusted Recursive Resolver</title>
 
           <author></author>
 

@@ -5,8 +5,8 @@
 ADD                                                             T. Reddy
 Internet-Draft                                                    McAfee
 Intended status: Informational                                   D. Wing
-Expires: December 4, 2020                                         Citrix
-                                                            June 2, 2020
+Expires: December 6, 2020                                         Citrix
+                                                            June 4, 2020
 
 
   DNS-over-HTTPS and DNS-over-TLS Server Deployment Considerations for
@@ -38,7 +38,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 4, 2020.
+   This Internet-Draft will expire on December 6, 2020.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Reddy & Wing            Expires December 4, 2020                [Page 1]
+Reddy & Wing            Expires December 6, 2020                [Page 1]
 
 Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
@@ -71,7 +71,9 @@ Table of Contents
    4.  IoT Devices . . . . . . . . . . . . . . . . . . . . . . . . .   4
    5.  BYOD  . . . . . . . . . . . . . . . . . . . . . . . . . . . .   6
    6.  Roaming Enterprise Users  . . . . . . . . . . . . . . . . . .   7
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
+     6.1.  VPN tunnel  . . . . . . . . . . . . . . . . . . . . . . .   7
+     6.2.  Client Authentication . . . . . . . . . . . . . . . . . .   7
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
    8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
    9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   8
    10. References  . . . . . . . . . . . . . . . . . . . . . . . . .   8
@@ -103,17 +105,18 @@ Table of Contents
    or DoH servers, the desired enterprise protection and enforcement can
    be bypassed.
 
-   In order to act on DNS requests from endpoints, network security
-   services can block DoT traffic by dropping outgoing packets to
-   destination port 853.  Identifying DoH traffic is far more
 
 
 
-Reddy & Wing            Expires December 4, 2020                [Page 2]
+
+Reddy & Wing            Expires December 6, 2020                [Page 2]
 
 Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
 
+   In order to act on DNS requests from endpoints, network security
+   services can block DoT traffic by dropping outgoing packets to
+   destination port 853.  Identifying DoH traffic is far more
    challenging than DoT traffic.  Network security services may try to
    identify the well-known DoH resolvers by their domain name, and DNS-
    over-HTTPS traffic can be blocked by dropping outgoing packets to
@@ -155,17 +158,14 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
    accessible for inspection, it becomes quite difficult for the
    infrastructure to suspect anything.
 
-   This document focuses on Enterprise networks, DoH/DoT sever discovery
+   This document focuses on DoH/DoT deployment considerations for
+   Enterprise networks, DoH/DoT sever discovery and deployment
    considerations for home networks are discussed in [I-D.btw-add-home].
 
 
 
 
-
-
-
-
-Reddy & Wing            Expires December 4, 2020                [Page 3]
+Reddy & Wing            Expires December 6, 2020                [Page 3]
 
 Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
@@ -195,18 +195,20 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
 4.  IoT Devices
 
-   IoT devices require agentless or standardized approaches.  The basis
-   for trust, therefore, is quite different from that of a laptop,
-   tablet, or smart phone.  The following bootstrapping mechanisms can
-   be used to securely provision IoT devices to use Enterprise provided
-   DoT and DoH servers:
+   The solution described in this document is aimed in general at non-
+   constrained IoT devices (i.e., class 2+ [RFC7228]) operating on a
+   Enterprise network without a device management tool and require
+   agentless or standardized approaches.  The basis for trust,
+   therefore, is quite different from that of a laptop, tablet, or smart
+   phone.  The following bootstrapping mechanisms can be used to
+   securely provision IoT devices to use Enterprise provided DoT and DoH
+   servers:
 
    o  IoT devices supporting Bootstrapping Remote Secure Key
       Infrastructures (BRSKI) discussed in
       [I-D.ietf-anima-bootstrapping-keyinfra] can be bootstrapped with
       the Enterprise-provided DoH/DoT servers using the mechanism
       discussed in Section 5 of [I-D.reddy-add-iot-byod-bootstrap].
-      This approach is useful for cloud-based onboarding of IoT devices.
 
    o  [RFC8572] defines a bootstrapping strategy for enabling devices to
       securely obtain the required configuration information with no
@@ -219,9 +221,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
 
 
-
-
-Reddy & Wing            Expires December 4, 2020                [Page 4]
+Reddy & Wing            Expires December 6, 2020                [Page 4]
 
 Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
@@ -250,7 +250,10 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
          and DNS server certificate of the local network's DoH/ DoT
          server.  It uses password-based authenticated key exchange
          (PAKE) scheme to authenticate the EST server and fetch the DoH/
-         DoT server certificate.
+         DoT server certificate.  Note that provisioning massive number
+         of IoT devices with PSK is not a scalable onboarding mechanism
+         but will work in Small Office/Home Office (SOHO) and Small/
+         Medium Enterprise (SME).
 
    o  If Device Provisioning Protocol (DPP) [dpp] is used, the
       configurator can securely configure IoT devices with the local
@@ -271,16 +274,16 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
    o  The Open Connectivitiy Foundation [ocf] defines the onboarding
       process before a device is operational.  Once the onboarding tool
       and the new device have authenticated and established secure
-      communication, the onboarding tool can provision the IoT device
-      with the local DoH/DoT server.
 
 
 
-
-Reddy & Wing            Expires December 4, 2020                [Page 5]
+Reddy & Wing            Expires December 6, 2020                [Page 5]
 
 Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
+
+      communication, the onboarding tool can provision the IoT device
+      with the local DoH/DoT server.
 
    This document does not discuss opportunistic or leap-of-faith
    bootstrapping methods, they are susceptible to security issues (e.g.,
@@ -327,49 +330,69 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
       attest the security status associated with device, such as minimum
       passcode length, biometric login enabled, OS version etc.  This
       approach is fast gaining traction especially with the advent of
-      closed OS like Windows 10 in S mode [win10s] or Chromebook
-      [Chromebook], where applications are sandboxed (e.g., ransomware
 
 
 
-
-Reddy & Wing            Expires December 4, 2020                [Page 6]
+Reddy & Wing            Expires December 6, 2020                [Page 6]
 
 Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
 
+      closed OS like Windows 10 in S mode [win10s] or Chromebook
+      [Chromebook], where applications are sandboxed (e.g., ransomware
       attack is not possbile) and applications can only be installed via
       the OS store.
 
-   The DoH/DoT server used by the Enterprise network may or may not be
-   globally accessible.  The BYOD may use the discovered DoH/DoT server
-   only when connected to the Enterprise network.  If the BYOD device
-   only uses the local DNS server to resolve internal-only domains, the
-   client can learn about domains for which the local network's resolver
-   is authoritative using the explicit Provisioning Domains (PvDs)
-   defined in [I-D.ietf-intarea-provisioning-domains].  The domains that
-   the DoH server claims authority for are listed in the "dnsZones" key
-   defined in Section 4.3 of [I-D.ietf-intarea-provisioning-domains].
+   When attached to the enterprise network yet needing to use the
+   enterprise's DoH server only to access the internal-only DNS names,
+   the client device can learn about domains for which the local
+   network's resolver is authoritative via dnsZones key defined in
+   Section 4.3 of [I-D.ietf-intarea-provisioning-domains] (as other DoH/
+   DoT servers will be unaware of the internal-only DNS names).
 
 6.  Roaming Enterprise Users
 
-   In this Enterprise scenario (Section 1.1.3 of [RFC7296]), a roaming
-   user connects to the Enterprise network through an IPsec tunnel.  The
-   split-tunnel Virtual Private Network (VPN) configuration allows the
-   endpoint to access hosts that resides in the Enterprise network
-   [RFC8598] using that tunnel; other traffic not destined to the
-   Enterprise does not traverse the tunnel.  In contrast, a non-split-
-   tunnel VPN configuration causes all traffic to traverse the tunnel
-   into the enterprise.
+6.1.  VPN tunnel
 
-   The DoH/DoT server hosted by the Enterprise network can be securely
-   discovered by the endpoint using the INTERNAL_ENC_DNS IKEv2
-   Configuration Payload Attribute Type defined in
-   [I-D.btw-add-ipsecme-ike].  For split-tunnel VPN configurations, the
-   endpoint uses the Enterprise-provided DoT/DoH server to resolve
-   internal-only domain names.  For non-split-tunnel VPN configurations,
-   the endpoint uses the Enterprise-provided DoT/DoH server to resolve
-   both internal and external domain names.
+   In this Enterprise scenario (Section 1.1.3 of [RFC7296]), a roaming
+   user connects to the Enterprise network through an VPN tunnel (e.g.,
+   IPsec, SSL, Wireguard).  The split-tunnel Virtual Private Network
+   (VPN) configuration allows the endpoint to access hosts that reside
+   in the Enterprise network [RFC8598] using that tunnel; other traffic
+   not destined to the Enterprise does not traverse the tunnel.  In
+   contrast, a non-split- tunnel VPN configuration causes all traffic to
+   traverse the tunnel into the enterprise.
+
+   When the VPN tunnel is IPsec, The DoH/DoT server hosted by the
+   Enterprise network can be securely discovered by the endpoint using
+   the INTERNAL_ENC_DNS IKEv2 Configuration Payload Attribute Type
+   defined in [I-D.btw-add-ipsecme-ike].  For split-tunnel VPN
+   configurations, the endpoint uses the Enterprise-provided DoT/DoH
+   server to resolve internal-only domain names.  For non-split-tunnel
+   VPN configurations, the endpoint uses the Enterprise-provided DoT/DoH
+   server to resolve both internal and external domain names.
+
+   Other VPN tunnel types have similar configuration capabilities, not
+   detailed here.
+
+6.2.  Client Authentication
+
+   When not on the local enterprise network (e.g., at home or coffee
+   shop) yet needing to access the enterprise DoH/DoT server but not
+   through a tunnel, roaming users can use client authentication to
+   access the Enterprise provided DoH/DoT server.  For example, Firefox
+   DoH setting accepts user credentials [Firefox-TRR] (network.trr.
+   credentials) to authenticate the client to access the DoH server.
+   The exact client authentication mechanism to authenticate to the DoH/
+   DoT server is outside the scope of this specification.
+
+
+
+
+Reddy & Wing            Expires December 6, 2020                [Page 7]
+
+Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
+
 
 7.  Security Considerations
 
@@ -385,15 +408,6 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
    The DNS client can validate the signatory (i.e., cryptographically
    attested by the Organization hosting the DoH/DoT server) and the user
    can review human-readable privacy policy information of the DNS
-
-
-
-
-Reddy & Wing            Expires December 4, 2020                [Page 7]
-
-Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
-
-
    server and assess whether the DNS server performs DNS-based content
    filtering.
 
@@ -410,8 +424,8 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
 9.  Acknowledgements
 
-   Thanks to Mohamed Boucadair, Sandeep Rao and Eliot Lear for the
-   discussion and comments.
+   Thanks to Mohamed Boucadair, Sandeep Rao, Vinny Parla, Nancy Cam-
+   Winget and Eliot Lear for the discussion and comments.
 
 10.  References
 
@@ -429,6 +443,13 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
+
+
+Reddy & Wing            Expires December 6, 2020                [Page 8]
+
+Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
+
+
    [RFC7858]  Hu, Z., Zhu, L., Heidemann, J., Mankin, A., Wessels, D.,
               and P. Hoffman, "Specification for DNS over Transport
               Layer Security (TLS)", RFC 7858, DOI 10.17487/RFC7858, May
@@ -442,13 +463,6 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
               for DNS over TLS and DNS over DTLS", RFC 8310,
               DOI 10.17487/RFC8310, March 2018,
               <https://www.rfc-editor.org/info/rfc8310>.
-
-
-
-Reddy & Wing            Expires December 4, 2020                [Page 8]
-
-Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
-
 
    [RFC8484]  Hoffman, P. and P. McManus, "DNS Queries over HTTPS
               (DoH)", RFC 8484, DOI 10.17487/RFC8484, October 2018,
@@ -480,6 +494,18 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
               <https://github.com/mozilla/policy-templates/blob/master/
               README.md#dnsoverhttps>.
 
+   [Firefox-TRR]
+              "Trusted Recursive Resolver",
+              <https://wiki.mozilla.org/Trusted_Recursive_Resolver>.
+
+
+
+
+Reddy & Wing            Expires December 6, 2020                [Page 9]
+
+Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
+
+
    [I-D.arkko-farrell-arch-model-t]
               Arkko, J. and S. Farrell, "Challenges and Changes in the
               Internet Threat Model", draft-arkko-farrell-arch-model-
@@ -496,15 +522,6 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
               "Internet Key Exchange Protocol Version 2 (IKEv2)
               Configuration for Encrypted DNS", draft-btw-add-ipsecme-
               ike-00 (work in progress), April 2020.
-
-
-
-
-
-Reddy & Wing            Expires December 4, 2020                [Page 9]
-
-Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
-
 
    [I-D.ietf-anima-bootstrapping-keyinfra]
               Pritikin, M., Richardson, M., Eckert, T., Behringer, M.,
@@ -534,6 +551,17 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
               <https://developer.apple.com/documentation/
               devicemanagement>.
 
+
+
+
+
+
+
+Reddy & Wing            Expires December 6, 2020               [Page 10]
+
+Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
+
+
    [ocf]      Open Connectivity Foundation, "OCF Security
               Specification", Open Connectivitiy Foundation , June 2017,
               <https://openconnectivity.org/specs/
@@ -550,17 +578,6 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
               developer.apple.com/library/archive/documentation/Networki
               ngInternet/Conceptual/iPhoneOTAConfiguration/OTASecurity/
               OTASecurity.html>.
-
-
-
-
-
-
-
-Reddy & Wing            Expires December 4, 2020               [Page 10]
-
-Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
-
 
    [PEAP]     Microsoft, "[MS-PEAP]: Protected Extensible Authentication
               Protocol (PEAP)", <https://docs.microsoft.com/en-
@@ -582,10 +599,24 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
               1", RFC 7170, DOI 10.17487/RFC7170, May 2014,
               <https://www.rfc-editor.org/info/rfc7170>.
 
+   [RFC7228]  Bormann, C., Ersue, M., and A. Keranen, "Terminology for
+              Constrained-Node Networks", RFC 7228,
+              DOI 10.17487/RFC7228, May 2014,
+              <https://www.rfc-editor.org/info/rfc7228>.
+
    [RFC7296]  Kaufman, C., Hoffman, P., Nir, Y., Eronen, P., and T.
               Kivinen, "Internet Key Exchange Protocol Version 2
               (IKEv2)", STD 79, RFC 7296, DOI 10.17487/RFC7296, October
               2014, <https://www.rfc-editor.org/info/rfc7296>.
+
+
+
+
+
+Reddy & Wing            Expires December 6, 2020               [Page 11]
+
+Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
+
 
    [RFC7626]  Bortzmeyer, S., "DNS Privacy Considerations", RFC 7626,
               DOI 10.17487/RFC7626, August 2015,
@@ -608,15 +639,6 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
               Touch Provisioning (SZTP)", RFC 8572,
               DOI 10.17487/RFC8572, April 2019,
               <https://www.rfc-editor.org/info/rfc8572>.
-
-
-
-
-
-Reddy & Wing            Expires December 4, 2020               [Page 11]
-
-Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
-
 
    [RFC8598]  Pauly, T. and P. Wouters, "Split DNS Configuration for the
               Internet Key Exchange Protocol Version 2 (IKEv2)",
@@ -647,26 +669,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Reddy & Wing            Expires December 4, 2020               [Page 12]
+Reddy & Wing            Expires December 6, 2020               [Page 12]
