@@ -359,10 +359,9 @@
         through a tunnel, roaming users can use client authentication to
         access the Enterprise provided DoH/DoT server. For example, Firefox
         DoH setting accepts user credentials <xref
-        target="Firefox-TRR"></xref> (network.trr. credentials) to
-        authenticate the client to access the DoH server. The exact client
-        authentication mechanism to authenticate to the DoH/DoT server is
-        outside the scope of this specification.</t>
+        target="Firefox-TRR"></xref> to authenticate the client to access the
+        DoH server. The exact client authentication mechanism to authenticate
+        to the DoH/DoT server is outside the scope of this specification.</t>
       </section>
     </section>
 

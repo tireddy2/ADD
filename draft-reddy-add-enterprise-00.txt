@@ -381,10 +381,10 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
    shop) yet needing to access the enterprise DoH/DoT server but not
    through a tunnel, roaming users can use client authentication to
    access the Enterprise provided DoH/DoT server.  For example, Firefox
-   DoH setting accepts user credentials [Firefox-TRR] (network.trr.
-   credentials) to authenticate the client to access the DoH server.
-   The exact client authentication mechanism to authenticate to the DoH/
-   DoT server is outside the scope of this specification.
+   DoH setting accepts user credentials [Firefox-TRR] to authenticate
+   the client to access the DoH server.  The exact client authentication
+   mechanism to authenticate to the DoH/DoT server is outside the scope
+   of this specification.
 
 
 
