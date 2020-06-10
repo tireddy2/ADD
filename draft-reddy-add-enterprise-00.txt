@@ -5,8 +5,8 @@
 ADD                                                             T. Reddy
 Internet-Draft                                                    McAfee
 Intended status: Informational                                   D. Wing
-Expires: December 6, 2020                                         Citrix
-                                                            June 4, 2020
+Expires: December 11, 2020                                        Citrix
+                                                            June 9, 2020
 
 
   DNS-over-HTTPS and DNS-over-TLS Server Deployment Considerations for
@@ -38,7 +38,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 6, 2020.
+   This Internet-Draft will expire on December 11, 2020.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Reddy & Wing            Expires December 6, 2020                [Page 1]
+Reddy & Wing            Expires December 11, 2020               [Page 1]
 
 Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
@@ -73,13 +73,14 @@ Table of Contents
    6.  Roaming Enterprise Users  . . . . . . . . . . . . . . . . . .   7
      6.1.  VPN tunnel  . . . . . . . . . . . . . . . . . . . . . . .   7
      6.2.  Client Authentication . . . . . . . . . . . . . . . . . .   7
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
-   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   8
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .   8
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .   8
-     10.2.  Informative References . . . . . . . . . . . . . . . . .   9
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  12
+   7.  Hop-by-hop encryption . . . . . . . . . . . . . . . . . . . .   8
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
+   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
+   10. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   8
+   11. References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
+     11.1.  Normative References . . . . . . . . . . . . . . . . . .   9
+     11.2.  Informative References . . . . . . . . . . . . . . . . .   9
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  13
 
 1.  Introduction
 
@@ -108,8 +109,7 @@ Table of Contents
 
 
 
-
-Reddy & Wing            Expires December 6, 2020                [Page 2]
+Reddy & Wing            Expires December 11, 2020               [Page 2]
 
 Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
@@ -165,7 +165,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
 
 
-Reddy & Wing            Expires December 6, 2020                [Page 3]
+Reddy & Wing            Expires December 11, 2020               [Page 3]
 
 Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
@@ -221,7 +221,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
 
 
-Reddy & Wing            Expires December 6, 2020                [Page 4]
+Reddy & Wing            Expires December 11, 2020               [Page 4]
 
 Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
@@ -277,7 +277,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
 
 
-Reddy & Wing            Expires December 6, 2020                [Page 5]
+Reddy & Wing            Expires December 11, 2020               [Page 5]
 
 Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
@@ -333,7 +333,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
 
 
-Reddy & Wing            Expires December 6, 2020                [Page 6]
+Reddy & Wing            Expires December 11, 2020               [Page 6]
 
 Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
@@ -389,12 +389,27 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
 
 
-Reddy & Wing            Expires December 6, 2020                [Page 7]
+Reddy & Wing            Expires December 11, 2020               [Page 7]
 
 Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
 
 
-7.  Security Considerations
+7.  Hop-by-hop encryption
+
+   If the Enterprise network is using the local DoH/DoT server
+   configured as a Forwarding DNS server [RFC8499] relying on the
+   upstream resolver (e.g., at an ISP) to perform recursive DNS lookups,
+   DNS messages exchanged between the local DoH/DoT server and recursive
+   resolver must be encrypted.  If the Enterprise network is using the
+   local DoH/DoT server configured as a recursive DNS server, DNS
+   messages exchanges between the recursive resolver and authoritative
+   servers (including TLD and root servers) should be encrypted to
+   address observation and modification threats.  The requirements for
+   adding confidentiality to DNS exchanges between recursive resolvers
+   and authoritative servers are discussed in
+   [I-D.ietf-dprive-phase2-requirements].
+
+8.  Security Considerations
 
    Security and privacy considerations in
    [I-D.reddy-add-iot-byod-bootstrap] need to be taken into
@@ -418,18 +433,26 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
    internal-only DNS names and use another DNS server (adhering with
    his/her expectations) for public domains.
 
-8.  IANA Considerations
+9.  IANA Considerations
 
    This document has no actions for IANA.
 
-9.  Acknowledgements
+10.  Acknowledgements
 
    Thanks to Mohamed Boucadair, Sandeep Rao, Vinny Parla, Nancy Cam-
    Winget and Eliot Lear for the discussion and comments.
 
-10.  References
 
-10.1.  Normative References
+
+
+Reddy & Wing            Expires December 11, 2020               [Page 8]
+
+Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
+
+
+11.  References
+
+11.1.  Normative References
 
    [I-D.reddy-add-iot-byod-bootstrap]
               Reddy.K, T., Wing, D., Richardson, M., and M. Boucadair,
@@ -442,13 +465,6 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
-
-
-
-Reddy & Wing            Expires December 6, 2020                [Page 8]
-
-Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
-
 
    [RFC7858]  Hu, Z., Zhu, L., Heidemann, J., Mankin, A., Wessels, D.,
               and P. Hoffman, "Specification for DNS over Transport
@@ -468,7 +484,7 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
               (DoH)", RFC 8484, DOI 10.17487/RFC8484, October 2018,
               <https://www.rfc-editor.org/info/rfc8484>.
 
-10.2.  Informative References
+11.2.  Informative References
 
    [Chrome-DoH]
               The Unicode Consortium, "Chrome DNS over HTTPS (aka DoH)",
@@ -478,6 +494,17 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
               The Unicode Consortium, "Chrome policies for users or
               browsers", <https://support.google.com/chrome/a/
               answer/2657289?hl=en>.
+
+
+
+
+
+
+
+Reddy & Wing            Expires December 11, 2020               [Page 9]
+
+Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
+
 
    [Chromebook]
               Microsoft, "Chromebook security",
@@ -497,14 +524,6 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
    [Firefox-TRR]
               "Trusted Recursive Resolver",
               <https://wiki.mozilla.org/Trusted_Recursive_Resolver>.
-
-
-
-
-Reddy & Wing            Expires December 6, 2020                [Page 9]
-
-Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
-
 
    [I-D.arkko-farrell-arch-model-t]
               Arkko, J. and S. Farrell, "Challenges and Changes in the
@@ -534,6 +553,21 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
               Location", draft-ietf-dnsop-terminology-ter-01 (work in
               progress), February 2020.
 
+
+
+
+
+Reddy & Wing            Expires December 11, 2020              [Page 10]
+
+Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
+
+
+   [I-D.ietf-dprive-phase2-requirements]
+              Livingood, J., Mayrhofer, A., and B. Overeinder, "DNS
+              Privacy Requirements for Exchanges between Recursive
+              Resolvers and Authoritative Servers", draft-ietf-dprive-
+              phase2-requirements-00 (work in progress), December 2019.
+
    [I-D.ietf-intarea-provisioning-domains]
               Pfister, P., Vyncke, E., Pauly, T., Schinazi, D., and W.
               Shao, "Discovering Provisioning Domain Names and Data",
@@ -550,17 +584,6 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
               Apple, "Mobile Device Management",
               <https://developer.apple.com/documentation/
               devicemanagement>.
-
-
-
-
-
-
-
-Reddy & Wing            Expires December 6, 2020               [Page 10]
-
-Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
-
 
    [ocf]      Open Connectivity Foundation, "OCF Security
               Specification", Open Connectivitiy Foundation , June 2017,
@@ -583,6 +606,17 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
               Protocol (PEAP)", <https://docs.microsoft.com/en-
               us/openspecs/windows_protocols/ms-peap/5308642b-90c9-4cc4-
               beec-fb367325c0f9>.
+
+
+
+
+
+
+
+Reddy & Wing            Expires December 11, 2020              [Page 11]
+
+Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
+
 
    [PSK]      Cisco, "Identity PSK Feature Deployment Guide",
               <https://www.cisco.com/c/en/us/td/docs/wireless/
@@ -609,15 +643,6 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
               (IKEv2)", STD 79, RFC 7296, DOI 10.17487/RFC7296, October
               2014, <https://www.rfc-editor.org/info/rfc7296>.
 
-
-
-
-
-Reddy & Wing            Expires December 6, 2020               [Page 11]
-
-Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
-
-
    [RFC7626]  Bortzmeyer, S., "DNS Privacy Considerations", RFC 7626,
               DOI 10.17487/RFC7626, August 2015,
               <https://www.rfc-editor.org/info/rfc7626>.
@@ -639,6 +664,15 @@ Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
               Touch Provisioning (SZTP)", RFC 8572,
               DOI 10.17487/RFC8572, April 2019,
               <https://www.rfc-editor.org/info/rfc8572>.
+
+
+
+
+
+Reddy & Wing            Expires December 11, 2020              [Page 12]
+
+Internet-Draft       DoH/DoT in Enterprise Networks            June 2020
+
 
    [RFC8598]  Pauly, T. and P. Wouters, "Split DNS Configuration for the
               Internet Key Exchange Protocol Version 2 (IKEv2)",
@@ -669,4 +703,26 @@ Authors' Addresses
 
 
 
-Reddy & Wing            Expires December 6, 2020               [Page 12]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reddy & Wing            Expires December 11, 2020              [Page 13]

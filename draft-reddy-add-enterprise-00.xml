@@ -202,7 +202,7 @@
           target="I-D.ietf-anima-bootstrapping-keyinfra"></xref> can be
           bootstrapped with the Enterprise-provided DoH/DoT servers using the
           mechanism discussed in Section 5 of <xref
-          target="I-D.reddy-add-iot-byod-bootstrap"></xref>. </t>
+          target="I-D.reddy-add-iot-byod-bootstrap"></xref>.</t>
 
           <t><xref target="RFC8572"></xref> defines a bootstrapping strategy
           for enabling devices to securely obtain the required configuration
@@ -242,7 +242,7 @@
               the DoH/DoT server certificate. Note that provisioning massive
               number of IoT devices with PSK is not a scalable onboarding
               mechanism but will work in Small Office/Home Office (SOHO) and
-              Small/Medium Enterprise (SME). </t>
+              Small/Medium Enterprise (SME).</t>
             </list></t>
 
           <t>If Device Provisioning Protocol (DPP) <xref target="dpp"></xref>
@@ -365,6 +365,21 @@
       </section>
     </section>
 
+    <section title="Hop-by-hop encryption">
+      <t>If the Enterprise network is using the local DoH/DoT server
+      configured as a Forwarding DNS server <xref target="RFC8499"></xref>
+      relying on the upstream resolver (e.g., at an ISP) to perform recursive
+      DNS lookups, DNS messages exchanged between the local DoH/DoT server and
+      recursive resolver must be encrypted. If the Enterprise network is using
+      the local DoH/DoT server configured as a recursive DNS server, DNS
+      messages exchanges between the recursive resolver and authoritative
+      servers (including TLD and root servers) should be encrypted to address
+      observation and modification threats. The requirements for adding
+      confidentiality to DNS exchanges between recursive resolvers and
+      authoritative servers are discussed in <xref
+      target="I-D.ietf-dprive-phase2-requirements"></xref>. </t>
+    </section>
+
     <section anchor="Security" title="Security Considerations">
       <t>Security and privacy considerations in <xref
       target="I-D.reddy-add-iot-byod-bootstrap"></xref> need to be taken into
@@ -443,6 +458,8 @@
       <?rfc include='reference.I-D.reddy-add-server-policy-selection'?>
 
       <?rfc include='reference.I-D.ietf-intarea-provisioning-domains'?>
+
+      <?rfc include='reference.I-D.ietf-dprive-phase2-requirements'?>
 
       <?rfc include='reference.I-D.btw-add-ipsecme-ike'?>
 
