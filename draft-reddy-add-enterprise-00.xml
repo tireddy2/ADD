@@ -365,7 +365,7 @@
       </section>
     </section>
 
-    <section title="Hop-by-hop encryption">
+    <section title="Upstream Encryption">
       <t>If the Enterprise network is using the local DoH/DoT server
       configured as a Forwarding DNS server <xref target="RFC8499"></xref>
       relying on the upstream resolver (e.g., at an ISP) to perform recursive
@@ -373,11 +373,9 @@
       recursive resolver must be encrypted. If the Enterprise network is using
       the local DoH/DoT server configured as a recursive DNS server, DNS
       messages exchanges between the recursive resolver and authoritative
-      servers (including TLD and root servers) should be encrypted to address
-      observation and modification threats. The requirements for adding
-      confidentiality to DNS exchanges between recursive resolvers and
-      authoritative servers are discussed in <xref
-      target="I-D.ietf-dprive-phase2-requirements"></xref>. </t>
+      servers (including TLD and root servers) SHOULD be encrypted to conform
+      to the requirements discussed in <xref
+      target="I-D.ietf-dprive-phase2-requirements"></xref>.</t>
     </section>
 
     <section anchor="Security" title="Security Considerations">
