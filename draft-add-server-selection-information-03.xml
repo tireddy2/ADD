@@ -152,12 +152,12 @@
           offers phishing blocking service.</t>
 
           <t hangText="Policy blocking:">Indicates whether the DNS server
-          maintains a block-list due to an policy by the operator of the DNS
+          maintains a block-list due to a policy by the operator of the DNS
           server.</t>
 
           <t hangText="Censored blocking:">Indicates whether the DNS server
           maintains a block-list based on a requirement from an external
-          entity.</t>
+          entity. This version of the specification does not distinguish blocking from regulatory bodies (e.g., LEA) vs. arbitrary blocking. Such differentiation may be defined if required. </t>
 
           <t hangText="QNAME minimization:">Indicates whether the DNS server
           implements QNAME minimisation <xref target="RFC7816"></xref>.</t>
