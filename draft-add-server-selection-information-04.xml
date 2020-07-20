@@ -263,12 +263,21 @@
 
       <t>The Policy Assertion Token (PAT) specifically uses this token format
       and defines claims that convey the policy information of DoH/DoT server.
-      After the DoT/DoH session is established, the client can retrieve the
-      PAT object using the RESINFO RRtype and QNAME of "resolver-info.arpa/IN"
-      defined in <xref target="I-D.pp-add-resinfo"></xref>. The signature of
-      PAT object can be validated by the DNS client. If the signer and the
-      contents of the PAT object comply with the user's requirements, the
-      user's client software can use that DNS server.</t>
+      If the DoT session is established, the client can retrieve the PAT
+      object using the RESINFO RRtype defined in <xref
+      target="I-D.pp-add-resinfo"></xref> and QNAME of the domain name that is
+      used to authenticate the privacy-enabling DNS server (referred to as ADN
+      in <xref target="RFC8310"></xref>). If the DoH session is established,
+      the DoH client can retrieve the PAT object using the the well-known URI
+      defined in <xref target="I-D.btw-add-rfc8484-clarification"></xref>. If
+      the special-use domain name "resolver-info.arpa/IN" defined in <xref
+      target="I-D.pp-add-resinfo"></xref> is used to discover the DoH/DoT
+      server, the client can retrieve the PAT object using the RESINFO RRtype
+      and QNAME of the special-use domain name. </t>
+
+      <t>The signature of PAT object can be validated by the DNS client. If
+      the signer and the contents of the PAT object comply with the user's
+      requirements, the user's client software can use that DNS server.</t>
 
       <t>The PAT object is signed by the DNS server's domain that is
       authoritative to assert the DNS server policy information. This
@@ -497,19 +506,6 @@
               roaming users can use client authentication to access the
               Enterprise provided DoH/DoT server. This is an optional
               attribute.</t>
-
-              <t hangText="splitdnsallowed:">If the operator of the network in
-              which the DNS server is discovered allows or blocks split DNS.
-              If the parameter value is set to 'true', split DNS is allowed
-              and it implies the endpoint can opt to use the DNS server to
-              resolve only internal-only DNS names. The endpoint can learn
-              about domains for which the local network's resolver is
-              authoritative via dnsZones key defined in Section 4.3 of <xref
-              target="I-D.ietf-intarea-provisioning-domains"></xref>. If the
-              parameter value is set to 'false', it implies the operator of
-              the network mandates use of the network-provided DNS server to
-              resolve all domains (internal and external) and split DNS mode
-              is prohibited. This is an optional attribute.</t>
 
               <t hangText="privacyurl:">A URL that points to the privacy
               policy information of the DNS server. This is a mandatory
@@ -868,6 +864,8 @@
 
       <?rfc include='reference.I-D.pp-add-resinfo'?>
 
+      <?rfc include='reference.I-D.btw-add-rfc8484-clarification'?>
+
       <?rfc include='reference.I-D.ietf-dnssd-push'?>
 
       <?rfc include="reference.RFC.7626"?>
@@ -883,8 +881,6 @@
       <?rfc include='reference.I-D.ietf-dnsop-extended-error' ?>
 
       <?rfc include='reference.I-D.ietf-dnsop-terminology-ter'?>
-
-      <?rfc include='reference.I-D.ietf-intarea-provisioning-domains'?>
 
       <?rfc include='reference.I-D.ietf-dprive-bcp-op'?>
 
