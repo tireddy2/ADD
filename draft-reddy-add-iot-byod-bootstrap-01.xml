@@ -311,15 +311,16 @@
       server. In this case, MDM is not installed on the device.</t>
 
       <section anchor="bootstrap-byod" title="Bootstrapping BYOD">
-        <t>This section focuses on onboarding Bring your own device (BYOD)
-        into the enterprise without MDM or configuration profile. If an
-        endpoint uses the credentials (username and password) provided by the
-        IT admin to mutually authenticate to the Enterprise WLAN Access Point
-        (e.g., PEAP-MSCHAPv2 <xref target="PEAP"></xref>, EAP-pwd <xref
+        <t>This section focuses on bootstrapping Bring your own device (BYOD)
+        to discover and authenticate DoH/DoT server provided by the enterprise
+        network but without MDM or configuration profile on the endpoint. If
+        an endpoint uses the credentials (username and password) provided by
+        the IT admin to mutually authenticate to the Enterprise WLAN Access
+        Point (e.g., PEAP-MSCHAPv2 <xref target="PEAP"></xref>, EAP-pwd <xref
         target="RFC8146"></xref>, EAP-PSK <xref target="RFC4764"></xref>), the
         following steps can be used to securely bootstrap the endpoint with
         the authentication domain name (ADN, defined in <xref
-        target="RFC8310"></xref> and DNS server certificate of the local
+        target="RFC8310"></xref>) and DNS server certificate of the local
         network's DoH/DoT server:</t>
 
         <t><list style="numbers">

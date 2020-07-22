@@ -75,13 +75,13 @@ Table of Contents
    6.  Connection Handshake and Service Invocation . . . . . . . . .   9
    7.  EST Service Discovery Procedure . . . . . . . . . . . . . . .  10
    8.  Network Reattachment  . . . . . . . . . . . . . . . . . . . .  10
-   9.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .  11
+   9.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .  12
    10. Security Considerations . . . . . . . . . . . . . . . . . . .  12
    11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
    12. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  13
    13. References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
      13.1.  Normative References . . . . . . . . . . . . . . . . . .  13
-     13.2.  Informative References . . . . . . . . . . . . . . . . .  14
+     13.2.  Informative References . . . . . . . . . . . . . . . . .  15
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  17
 
 1.  Introduction
@@ -304,14 +304,16 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
 4.1.  Bootstrapping BYOD
 
-   This section focuses on onboarding Bring your own device (BYOD) into
-   the enterprise without MDM or configuration profile.  If an endpoint
-   uses the credentials (username and password) provided by the IT admin
-   to mutually authenticate to the Enterprise WLAN Access Point (e.g.,
-   PEAP-MSCHAPv2 [PEAP], EAP-pwd [RFC8146], EAP-PSK [RFC4764]), the
-   following steps can be used to securely bootstrap the endpoint with
-   the authentication domain name (ADN, defined in [RFC8310] and DNS
-   server certificate of the local network's DoH/DoT server:
+   This section focuses on bootstrapping Bring your own device (BYOD) to
+   discover and authenticate DoH/DoT server provided by the enterprise
+   network but without MDM or configuration profile on the endpoint.  If
+   an endpoint uses the credentials (username and password) provided by
+   the IT admin to mutually authenticate to the Enterprise WLAN Access
+   Point (e.g., PEAP-MSCHAPv2 [PEAP], EAP-pwd [RFC8146], EAP-PSK
+   [RFC4764]), the following steps can be used to securely bootstrap the
+   endpoint with the authentication domain name (ADN, defined in
+   [RFC8310] and DNS server certificate of the local network's DoH/DoT
+   server:
 
    1.  The endpoint authenticates to the local network and discovers the
        Enrollment over Secure Transport (EST) [RFC7030] server using the
@@ -328,8 +330,6 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
        As a reminder, PAKE is an authentication method that allows the
        use of usernames and passwords over unencrypted channels without
-       revealing the passwords to an eavesdropper.  Similarly, the
-       mutual authentication for HTTP is based on PAKE and provides
 
 
 
@@ -338,6 +338,8 @@ Reddy, et al.           Expires November 6, 2020                [Page 6]
 Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
 
+       revealing the passwords to an eavesdropper.  Similarly, the
+       mutual authentication for HTTP is based on PAKE and provides
        mutual authentication between an HTTP client and an HTTP server
        using username and password as credentials.  The cryptographic
        algorithms to use with the mutual authentication protocol for
@@ -384,8 +386,6 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
        identifier type within subjectAltName entry in the DNS server
        certificate.  The DNS server certificate is associated with the
        ADN to be matched with the certificate given by the DNS server in
-       TLS.  To some extent, this approach is similar to certificate
-       usage PKIX-EE(1) defined in [RFC7671].
 
 
 
@@ -393,6 +393,9 @@ Reddy, et al.           Expires November 6, 2020                [Page 7]
 
 Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
+
+       TLS.  To some extent, this approach is similar to certificate
+       usage PKIX-EE(1) defined in [RFC7671].
 
    Figure 1 illustrates a sequence diagram for bootstrapping an endpoint
    with the local network's ADN and DNS server certificate.
@@ -439,9 +442,6 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
    o  Bootstrapping Remote Secure Key Infrastructures (BRSKI) discussed
       in [I-D.ietf-anima-bootstrapping-keyinfra] provides a solution for
-      secure automated bootstrap of devices.  BRSKI specifies means to
-      provision credentials on devices to be used to operationally
-      access networks.  In addition, BRSKI provides an automated
 
 
 
@@ -450,6 +450,9 @@ Reddy, et al.           Expires November 6, 2020                [Page 8]
 Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
 
+      secure automated bootstrap of devices.  BRSKI specifies means to
+      provision credentials on devices to be used to operationally
+      access networks.  In addition, BRSKI provides an automated
       mechanism for the bootstrap distribution of CA certificates from
       the EST server.  The IoT device can use BRSKI to bootstrap the IoT
       device using the IoT manufacturer provisioned X.509 certificate,
@@ -495,9 +498,6 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
    Section 7.2 of [RFC8310].  The DNS client initiates TLS handshake
    with the DNS server, the DNS server presents its certificate in
    ServerHello message, and the DNS client MUST match the DNS server
-   certificate downloaded in Step 4 in Section 4.1 or Section 5 with the
-   certificate provided by the DNS server in TLS handshake.  If the
-
 
 
 
@@ -506,6 +506,8 @@ Reddy, et al.           Expires November 6, 2020                [Page 9]
 Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
 
+   certificate downloaded in Step 4 in Section 4.1 or Section 5 with the
+   certificate provided by the DNS server in TLS handshake.  If the
    match is successful, the DNS client MUST validate the server
    certificate using an authorized trust anchor.
 
@@ -552,8 +554,6 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
    If the DNS server certificate is invalid (e.g., revoked or expired),
    the endpoint discovers and initiates TLS handshake with the EST
    server, and uses the validation techniques described in [RFC6125] to
-   compare the reference identifier (created in Step 2 of Section 4.1 in
-   this document) to the EST server certificate and verifies the entire
 
 
 
@@ -562,6 +562,8 @@ Reddy, et al.           Expires November 6, 2020               [Page 10]
 Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
 
+   compare the reference identifier (created in Step 2 of Section 4.1 in
+   this document) to the EST server certificate and verifies the entire
    certification path as per [RFC5280].  The endpoint then gets the DNS
    server certificate from the EST server.  If the DNS-ID identifier
    type within subjectAltName entry in the DNS server certificate does
@@ -605,11 +607,9 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
    Figure 2: Bootstrapping Endpoint Devices on subsequent attachments to
                                 the network
 
-9.  Privacy Considerations
 
-   [RFC7626] discusses DNS privacy considerations in both "on the wire"
-   (Section 2.4 of [RFC7626]) and "in the server" (Section 2.5 of
-   [RFC7626] contexts.  The mechanism defined in
+
+
 
 
 
@@ -618,6 +618,11 @@ Reddy, et al.           Expires November 6, 2020               [Page 11]
 Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
 
+9.  Privacy Considerations
+
+   [RFC7626] discusses DNS privacy considerations in both "on the wire"
+   (Section 2.4 of [RFC7626]) and "in the server" (Section 2.5 of
+   [RFC7626] contexts.  The mechanism defined in
    [I-D.reddy-add-server-policy-selection] can be used by the DNS server
    to communicate its privacy statement URL and filtering policy to a
    DNS client.  This communication is cryptographically signed to attest
@@ -661,11 +666,6 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
    server and the server certificate is validated for subsequent TLS
    connections to the EST server.
 
-   Security considerations in [I-D.ietf-anima-bootstrapping-keyinfra]
-   need to be taken into consideration for IoT devices.
-
-
-
 
 
 
@@ -673,6 +673,9 @@ Reddy, et al.           Expires November 6, 2020               [Page 12]
 
 Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
+
+   Security considerations in [I-D.ietf-anima-bootstrapping-keyinfra]
+   need to be taken into consideration for IoT devices.
 
 11.  IANA Considerations
 
@@ -716,12 +719,9 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
               (CRL) Profile", RFC 5280, DOI 10.17487/RFC5280, May 2008,
               <https://www.rfc-editor.org/info/rfc5280>.
 
-   [RFC6125]  Saint-Andre, P. and J. Hodges, "Representation and
-              Verification of Domain-Based Application Service Identity
-              within Internet Public Key Infrastructure Using X.509
-              (PKIX) Certificates in the Context of Transport Layer
-              Security (TLS)", RFC 6125, DOI 10.17487/RFC6125, March
-              2011, <https://www.rfc-editor.org/info/rfc6125>.
+
+
+
 
 
 
@@ -729,6 +729,13 @@ Reddy, et al.           Expires November 6, 2020               [Page 13]
 
 Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
+
+   [RFC6125]  Saint-Andre, P. and J. Hodges, "Representation and
+              Verification of Domain-Based Application Service Identity
+              within Internet Public Key Infrastructure Using X.509
+              (PKIX) Certificates in the Context of Transport Layer
+              Security (TLS)", RFC 6125, DOI 10.17487/RFC6125, March
+              2011, <https://www.rfc-editor.org/info/rfc6125>.
 
    [RFC6762]  Cheshire, S. and M. Krochmal, "Multicast DNS", RFC 6762,
               DOI 10.17487/RFC6762, February 2013,
@@ -770,13 +777,6 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
               Terminology", BCP 219, RFC 8499, DOI 10.17487/RFC8499,
               January 2019, <https://www.rfc-editor.org/info/rfc8499>.
 
-13.2.  Informative References
-
-   [CDN]      "End-User Mapping: Next Generation Request Routing for
-              Content Delivery", 2015,
-              <https://conferences.sigcomm.org/sigcomm/2015/pdf/papers/
-              p167.pdf>.
-
 
 
 
@@ -785,6 +785,13 @@ Reddy, et al.           Expires November 6, 2020               [Page 14]
 
 Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
+
+13.2.  Informative References
+
+   [CDN]      "End-User Mapping: Next Generation Request Routing for
+              Content Delivery", 2015,
+              <https://conferences.sigcomm.org/sigcomm/2015/pdf/papers/
+              p167.pdf>.
 
    [Chrome-DoH]
               The Unicode Consortium, "Chrome DNS over HTTPS (aka DoH)",
@@ -825,13 +832,6 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
               Home Networks", draft-btw-add-home-07 (work in progress),
               July 2020.
 
-   [I-D.ietf-dnsop-terminology-ter]
-              Hoffman, P., "Terminology for DNS Transports and
-              Location", draft-ietf-dnsop-terminology-ter-01 (work in
-              progress), February 2020.
-
-
-
 
 
 
@@ -841,6 +841,11 @@ Reddy, et al.           Expires November 6, 2020               [Page 15]
 
 Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
+
+   [I-D.ietf-dnsop-terminology-ter]
+              Hoffman, P., "Terminology for DNS Transports and
+              Location", draft-ietf-dnsop-terminology-ter-01 (work in
+              progress), February 2020.
 
    [I-D.reddy-add-server-policy-selection]
               Reddy.K, T., Wing, D., Richardson, M., and M. Boucadair,
@@ -884,11 +889,6 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
               and Operational Guidance", RFC 7671, DOI 10.17487/RFC7671,
               October 2015, <https://www.rfc-editor.org/info/rfc7671>.
 
-   [RFC7871]  Contavalli, C., van der Gaast, W., Lawrence, D., and W.
-              Kumari, "Client Subnet in DNS Queries", RFC 7871,
-              DOI 10.17487/RFC7871, May 2016,
-              <https://www.rfc-editor.org/info/rfc7871>.
-
 
 
 
@@ -897,6 +897,11 @@ Reddy, et al.           Expires November 6, 2020               [Page 16]
 
 Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
+
+   [RFC7871]  Contavalli, C., van der Gaast, W., Lawrence, D., and W.
+              Kumari, "Client Subnet in DNS Queries", RFC 7871,
+              DOI 10.17487/RFC7871, May 2016,
+              <https://www.rfc-editor.org/info/rfc7871>.
 
    [RFC8120]  Oiwa, Y., Watanabe, H., Takagi, H., Maeda, K., Hayashi,
               T., and Y. Ioku, "Mutual Authentication Protocol for
@@ -940,11 +945,6 @@ Authors' Addresses
    USA
 
    Email: mcr+ietf@sandelman.ca
-
-
-
-
-
 
 
 
