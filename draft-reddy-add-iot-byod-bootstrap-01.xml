@@ -380,8 +380,8 @@
             server certificate will include SRV-ID "_domain-s.example.net"
             along with DNS-ID "example.net". The SRV service label "domain-s"
             is defined in Section 6 of <xref target="RFC7858"></xref> for DoT
-            protocol. The SRV service label "doh" is defined in Section 10.4
-            of <xref target="I-D.btw-add-home"></xref> for DoH protocol.</t>
+            protocol. The SRV service label "doh" is defined in <xref
+            target="IANA"></xref> for DoH protocol.</t>
 
             <t>The endpoint configures the authentication domain name (ADN)
             (defined in <xref target="RFC8310"></xref>) for the DNS server
@@ -509,10 +509,9 @@
       privacy-enabling DNS server provided by the local network, the DNS
       client can fallback to a privacy-enabling public DNS server.</t>
 
-      <t>Note: This section will be further updated to reflect the outcome of
-      the discussion in <xref target="I-D.btw-add-home"></xref> for a DoH
-      client to retrieve the list of supported URI templates by a DoH server
-      (Section 3 of <xref target="RFC8484"></xref>).</t>
+      <t>The DoH client contacts that DoH resolver to retrieve the list of
+      supported DoH services using the well-known URI defined in <xref
+      target="I-D.btw-add-rfc8484-clarification"></xref>.</t>
     </section>
 
     <section anchor="EST_Discovery" title="EST Service Discovery Procedure">
@@ -648,12 +647,13 @@
     </section>
 
     <section anchor="IANA" title="IANA Considerations">
-      <t>IANA is requested to allocate the following service name from the
-      registry available at:
-      https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml.</t>
+      <section title="Service Name for EST">
+        <t>IANA is requested to allocate the following service name from the
+        registry available at: https://www.iana.org/assignments/service-
+        names-port-numbers/service-names-port-numbers.xhtml.</t>
 
-      <t><figure>
-          <artwork><![CDATA[     Service Name:            est
+        <t><figure>
+            <artwork><![CDATA[     Service Name:            est
      Port Number:             N/A
      Transport Protocol(s):   TCP
      Description:             Enrollment over Secure Transport (EST)
@@ -661,7 +661,25 @@
      Contact:                 IETF Chair <chair@ietf.org>
      Reference:               [ThisDocument]
 ]]></artwork>
-        </figure></t>
+          </figure></t>
+      </section>
+
+      <section title="Service Name for DoH">
+        <t>IANA is requested to allocate the following service name from the
+        registry available at: https://www.iana.org/assignments/service-
+        names-port-numbers/service-names-port-numbers.xhtml.</t>
+
+        <t><figure>
+            <artwork><![CDATA[        Service Name:            doh
+        Port Number:             N/A
+        Transport Protocol(s):   TCP
+        Description:             DNS-over-HTTPS
+        Assignee:                IESG <iesg@ietf.org>
+        Contact:                 IETF Chair <chair@ietf.org>
+        Reference:               [ThisDocument]
+]]></artwork>
+          </figure></t>
+      </section>
     </section>
 
     <section anchor="acknowledgments" title="Acknowledgments">
@@ -709,6 +727,8 @@
       <?rfc include='reference.I-D.barnes-tls-pake'?>
 
       <?rfc include='reference.I-D.reddy-add-server-policy-selection'?>
+
+      <?rfc include='reference.I-D.btw-add-rfc8484-clarification'?>
 
       <?rfc include='reference.I-D.btw-add-home'?>
 

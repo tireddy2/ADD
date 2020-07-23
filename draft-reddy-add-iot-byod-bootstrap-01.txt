@@ -78,11 +78,13 @@ Table of Contents
    9.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .  12
    10. Security Considerations . . . . . . . . . . . . . . . . . . .  12
    11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
+     11.1.  Service Name for EST . . . . . . . . . . . . . . . . . .  13
+     11.2.  Service Name for DoH . . . . . . . . . . . . . . . . . .  13
    12. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  13
    13. References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
      13.1.  Normative References . . . . . . . . . . . . . . . . . .  13
      13.2.  Informative References . . . . . . . . . . . . . . . . .  15
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  17
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  18
 
 1.  Introduction
 
@@ -104,8 +106,6 @@ Table of Contents
    o  Content Delivery Networks (CDNs) that map traffic based on DNS may
       lose the ability to direct end-user traffic to a nearby service-
       specific cluster in cases where a DNS service is being used that
-      is not affiliated with the local network and which does not send
-
 
 
 
@@ -114,6 +114,7 @@ Reddy, et al.           Expires November 6, 2020                [Page 2]
 Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
 
+      is not affiliated with the local network and which does not send
       "EDNS Client Subnet" (ECS) information [RFC7871] to the CDN's DNS
       authorities [CDN].
 
@@ -161,7 +162,6 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
    o  If the endpoint is an IoT device which is configured to use public
       DoH/DoT servers, and if a policy enforcement point in the local
-      network is programmed using, for example, a Manufacturer Usage
 
 
 
@@ -170,6 +170,7 @@ Reddy, et al.           Expires November 6, 2020                [Page 3]
 Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
 
+      network is programmed using, for example, a Manufacturer Usage
       Description (MUD) file [RFC8520] by a MUD manager to only allow
       intented communications to and from the IoT device, the policy
       enforcement point cannot enforce the network Access Control List
@@ -217,7 +218,6 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
    The problems discussed in Section 1 will be encountered in Enterprise
    networks.  Typically Enterprise networks do not assume that all
    devices in their network are managed by the IT team or Mobile Device
-   Management (MDM) devices, especially in the quite common BYOD ("Bring
 
 
 
@@ -226,6 +226,7 @@ Reddy, et al.           Expires November 6, 2020                [Page 4]
 Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
 
+   Management (MDM) devices, especially in the quite common BYOD ("Bring
    Your Own Device") scenario.  The mechanisms specified in this
    document can be used by BYOD devices to discover and authenticate DoT
    and DoH servers provided by the Enterprise network.  This mechanism
@@ -276,7 +277,6 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
 
 
-
 Reddy, et al.           Expires November 6, 2020                [Page 5]
 
 Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
@@ -312,7 +312,7 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
    Point (e.g., PEAP-MSCHAPv2 [PEAP], EAP-pwd [RFC8146], EAP-PSK
    [RFC4764]), the following steps can be used to securely bootstrap the
    endpoint with the authentication domain name (ADN, defined in
-   [RFC8310] and DNS server certificate of the local network's DoH/DoT
+   [RFC8310]) and DNS server certificate of the local network's DoH/DoT
    server:
 
    1.  The endpoint authenticates to the local network and discovers the
@@ -378,8 +378,8 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
        For example, DNS server certificate will include SRV-ID "_domain-
        s.example.net" along with DNS-ID "example.net".  The SRV service
        label "domain-s" is defined in Section 6 of [RFC7858] for DoT
-       protocol.  The SRV service label "doh" is defined in Section 10.4
-       of [I-D.btw-add-home] for DoH protocol.
+       protocol.  The SRV service label "doh" is defined in Section 11
+       for DoH protocol.
 
    5.  The endpoint configures the authentication domain name (ADN)
        (defined in [RFC8310]) for the DNS server from the DNS-ID
@@ -519,10 +519,9 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
    privacy-enabling DNS server provided by the local network, the DNS
    client can fallback to a privacy-enabling public DNS server.
 
-   Note: This section will be further updated to reflect the outcome of
-   the discussion in [I-D.btw-add-home] for a DoH client to retrieve the
-   list of supported URI templates by a DoH server (Section 3 of
-   [RFC8484]).
+   The DoH client contacts that DoH resolver to retrieve the list of
+   supported DoH services using the well-known URI defined in
+   [I-D.btw-add-rfc8484-clarification].
 
 7.  EST Service Discovery Procedure
 
@@ -554,6 +553,7 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
    If the DNS server certificate is invalid (e.g., revoked or expired),
    the endpoint discovers and initiates TLS handshake with the EST
    server, and uses the validation techniques described in [RFC6125] to
+   compare the reference identifier (created in Step 2 of Section 4.1 in
 
 
 
@@ -562,7 +562,6 @@ Reddy, et al.           Expires November 6, 2020               [Page 10]
 Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
 
-   compare the reference identifier (created in Step 2 of Section 4.1 in
    this document) to the EST server certificate and verifies the entire
    certification path as per [RFC5280].  The endpoint then gets the DNS
    server certificate from the EST server.  If the DNS-ID identifier
@@ -606,6 +605,7 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
    Figure 2: Bootstrapping Endpoint Devices on subsequent attachments to
                                 the network
+
 
 
 
@@ -679,6 +679,8 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
 11.  IANA Considerations
 
+11.1.  Service Name for EST
+
    IANA is requested to allocate the following service name from the
    registry available at: https://www.iana.org/assignments/service-
    names-port-numbers/service-names-port-numbers.xhtml.
@@ -691,6 +693,20 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
         Contact:                 IETF Chair <chair@ietf.org>
         Reference:               [ThisDocument]
 
+11.2.  Service Name for DoH
+
+   IANA is requested to allocate the following service name from the
+   registry available at: https://www.iana.org/assignments/service-
+   names-port-numbers/service-names-port-numbers.xhtml.
+
+           Service Name:            doh
+           Port Number:             N/A
+           Transport Protocol(s):   TCP
+           Description:             DNS-over-HTTPS
+           Assignee:                IESG <iesg@ietf.org>
+           Contact:                 IETF Chair <chair@ietf.org>
+           Reference:               [ThisDocument]
+
 12.  Acknowledgments
 
    Thanks to Joe Hildebrand, Harsha Joshi, Shashank Jain, Patrick
@@ -701,6 +717,18 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 13.  References
 
 13.1.  Normative References
+
+
+
+
+
+
+
+
+Reddy, et al.           Expires November 6, 2020               [Page 13]
+
+Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
+
 
    [I-D.ietf-anima-bootstrapping-keyinfra]
               Pritikin, M., Richardson, M., Eckert, T., Behringer, M.,
@@ -718,17 +746,6 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
               Infrastructure Certificate and Certificate Revocation List
               (CRL) Profile", RFC 5280, DOI 10.17487/RFC5280, May 2008,
               <https://www.rfc-editor.org/info/rfc5280>.
-
-
-
-
-
-
-
-Reddy, et al.           Expires November 6, 2020               [Page 13]
-
-Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
-
 
    [RFC6125]  Saint-Andre, P. and J. Hodges, "Representation and
               Verification of Domain-Based Application Service Identity
@@ -761,6 +778,14 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
               Mechanism 3 (KAM3)", RFC 8121, DOI 10.17487/RFC8121, April
               2017, <https://www.rfc-editor.org/info/rfc8121>.
 
+
+
+
+Reddy, et al.           Expires November 6, 2020               [Page 14]
+
+Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
+
+
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
@@ -776,15 +801,6 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
    [RFC8499]  Hoffman, P., Sullivan, A., and K. Fujiwara, "DNS
               Terminology", BCP 219, RFC 8499, DOI 10.17487/RFC8499,
               January 2019, <https://www.rfc-editor.org/info/rfc8499>.
-
-
-
-
-
-Reddy, et al.           Expires November 6, 2020               [Page 14]
-
-Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
-
 
 13.2.  Informative References
 
@@ -817,6 +833,15 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
               <https://github.com/mozilla/policy-templates/blob/master/
               README.md#dnsoverhttps>.
 
+
+
+
+
+Reddy, et al.           Expires November 6, 2020               [Page 15]
+
+Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
+
+
    [I-D.arkko-farrell-arch-model-t]
               Arkko, J. and S. Farrell, "Challenges and Changes in the
               Internet Threat Model", draft-arkko-farrell-arch-model-
@@ -832,15 +857,11 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
               Home Networks", draft-btw-add-home-07 (work in progress),
               July 2020.
 
-
-
-
-
-
-Reddy, et al.           Expires November 6, 2020               [Page 15]
-
-Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
-
+   [I-D.btw-add-rfc8484-clarification]
+              Boucadair, M., Cook, N., Reddy.K, T., and D. Wing,
+              "Supporting Redirection for DNS Queries over HTTPS (DoH)",
+              draft-btw-add-rfc8484-clarification-02 (work in progress),
+              July 2020.
 
    [I-D.ietf-dnsop-terminology-ter]
               Hoffman, P., "Terminology for DNS Transports and
@@ -866,6 +887,17 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
               ngInternet/Conceptual/iPhoneOTAConfiguration/OTASecurity/
               OTASecurity.html>.
 
+
+
+
+
+
+
+Reddy, et al.           Expires November 6, 2020               [Page 16]
+
+Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
+
+
    [PEAP]     Microsoft, "[MS-PEAP]: Protected Extensible Authentication
               Protocol (PEAP)", <https://docs.microsoft.com/en-
               us/openspecs/windows_protocols/ms-peap/5308642b-90c9-4cc4-
@@ -888,15 +920,6 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
               Authentication of Named Entities (DANE) Protocol: Updates
               and Operational Guidance", RFC 7671, DOI 10.17487/RFC7671,
               October 2015, <https://www.rfc-editor.org/info/rfc7671>.
-
-
-
-
-
-Reddy, et al.           Expires November 6, 2020               [Page 16]
-
-Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
-
 
    [RFC7871]  Contavalli, C., van der Gaast, W., Lawrence, D., and W.
               Kumari, "Client Subnet in DNS Queries", RFC 7871,
@@ -921,6 +944,15 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
               Description Specification", RFC 8520,
               DOI 10.17487/RFC8520, March 2019,
               <https://www.rfc-editor.org/info/rfc8520>.
+
+
+
+
+
+Reddy, et al.           Expires November 6, 2020               [Page 17]
+
+Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
+
 
 Authors' Addresses
 
@@ -947,44 +979,12 @@ Authors' Addresses
    Email: mcr+ietf@sandelman.ca
 
 
-
-
-Reddy, et al.           Expires November 6, 2020               [Page 17]
-
-Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
-
-
    Mohamed Boucadair
    Orange
    Rennes  35000
    France
 
    Email: mohamed.boucadair@orange.com
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
