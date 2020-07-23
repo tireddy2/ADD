@@ -174,7 +174,7 @@
           public DoH/DoT servers, and if a policy enforcement point in the
           local network is programmed using, for example, a Manufacturer Usage
           Description (MUD) file <xref target="RFC8520"></xref> by a MUD
-          manager to only allow intented communications to and from the IoT
+          manager to only allow intended communications to and from the IoT
           device, the policy enforcement point cannot enforce the network
           Access Control List (ACL) rules based on domain names (Section 8 of
           <xref target="RFC8520"></xref>).</t>
