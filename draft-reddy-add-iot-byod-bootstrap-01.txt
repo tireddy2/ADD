@@ -172,7 +172,7 @@ Internet-DrDoT/DoH server discovery for for BYOD/IoT devices    May 2020
 
       network is programmed using, for example, a Manufacturer Usage
       Description (MUD) file [RFC8520] by a MUD manager to only allow
-      intented communications to and from the IoT device, the policy
+      intended communications to and from the IoT device, the policy
       enforcement point cannot enforce the network Access Control List
       (ACL) rules based on domain names (Section 8 of [RFC8520]).
 
