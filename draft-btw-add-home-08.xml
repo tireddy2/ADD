@@ -1066,10 +1066,11 @@ Legend:
         network administraor to mutually authenticate to the home WLAN Access
         Point (e.g., 802.1x Wireless User Authentication on OpenWRT <xref
         target="dot1x"></xref>, EAP-pwd <xref target="RFC8146"></xref>). Not
-        all of IoT devices support 802.1x supplicant and need an alternate
-        mechanism to connect to the Home network. To address this limitation,
-        unique pre-shared keys can be created for each IoT device and WPA-PSK
-        is used (e.g., <xref target="PSK"></xref>).</t>
+        all of endpoint devices (e.g., IoT devices) support 802.1x supplicant
+        and need an alternate mechanism to connect to the Home network. To
+        address this limitation, unique pre-shared keys can be created for
+        each such device and WPA-PSK is used (e.g., <xref
+        target="PSK"></xref>).</t>
       </section>
     </section>
 

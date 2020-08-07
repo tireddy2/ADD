@@ -1189,10 +1189,11 @@ Internet-Draft       Encrypted DNS in Home Networks          August 2020
    credentials (username and password, typically) provided by the home
    network administraor to mutually authenticate to the home WLAN Access
    Point (e.g., 802.1x Wireless User Authentication on OpenWRT [dot1x],
-   EAP-pwd [RFC8146]).  Not all of IoT devices support 802.1x supplicant
-   and need an alternate mechanism to connect to the Home network.  To
-   address this limitation, unique pre-shared keys can be created for
-   each IoT device and WPA-PSK is used (e.g., [PSK]).
+   EAP-pwd [RFC8146]).  Not all of endpoint devices (e.g., IoT devices)
+   support 802.1x supplicant and need an alternate mechanism to connect
+   to the Home network.  To address this limitation, unique pre-shared
+   keys can be created for each such device and WPA-PSK is used (e.g.,
+   [PSK]).
 
 11.  IANA Considerations
 
@@ -1223,7 +1224,6 @@ Internet-Draft       Encrypted DNS in Home Networks          August 2020
    |      |                  |       | authentication |                |
    |      |                  |       | domain name    |                |
    +------+------------------+-------+----------------+----------------+
-
 
 
 
