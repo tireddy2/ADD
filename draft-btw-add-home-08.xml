@@ -733,7 +733,7 @@ with:
       <t>Even if the use of a discovered encrypted DNS server is beyond the
       discovery process and falls under encrypted server selection, the
       following subsections discuss conditions under which discovered
-      encrypted DNS server can be used. </t>
+      encrypted DNS server can be used.</t>
 
       <section anchor="auto" title="Encrypted DNS Auto-Upgrade">
         <t>Additional considerations are discussed below for the use of DoH
@@ -1067,7 +1067,7 @@ Legend:
         Point (e.g., 802.1x Wireless User Authentication on OpenWRT <xref
         target="dot1x"></xref>, EAP-pwd <xref target="RFC8146"></xref>). Not
         all of endpoint devices (e.g., IoT devices) support 802.1x supplicant
-        and need an alternate mechanism to connect to the Home network. To
+        and need an alternate mechanism to connect to the home network. To
         address this limitation, unique pre-shared keys can be created for
         each such device and WPA-PSK is used (e.g., <xref
         target="PSK"></xref>).</t>
@@ -1151,7 +1151,8 @@ Legend:
       <t>Many thanks to Christian Jacquenet for the review.</t>
 
       <t>Thanks to Tommy Jensen, Stephen Farrell, Martin Thomson, Vittorio
-      Bertola, and Iain Sharp for the comments.</t>
+      Bertola, Stephane Bortzmeyer, Ben Schwartz and Iain Sharp for the
+      comments.</t>
 
       <t>Thanks to Mark Nottingham for the feedback on HTTP redirection.</t>
     </section>

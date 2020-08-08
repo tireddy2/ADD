@@ -1191,7 +1191,7 @@ Internet-Draft       Encrypted DNS in Home Networks          August 2020
    Point (e.g., 802.1x Wireless User Authentication on OpenWRT [dot1x],
    EAP-pwd [RFC8146]).  Not all of endpoint devices (e.g., IoT devices)
    support 802.1x supplicant and need an alternate mechanism to connect
-   to the Home network.  To address this limitation, unique pre-shared
+   to the home network.  To address this limitation, unique pre-shared
    keys can be created for each such device and WPA-PSK is used (e.g.,
    [PSK]).
 
@@ -1254,7 +1254,8 @@ Internet-Draft       Encrypted DNS in Home Networks          August 2020
    Many thanks to Christian Jacquenet for the review.
 
    Thanks to Tommy Jensen, Stephen Farrell, Martin Thomson, Vittorio
-   Bertola, and Iain Sharp for the comments.
+   Bertola, Stephane Bortzmeyer, Ben Schwartz and Iain Sharp for the
+   comments.
 
    Thanks to Mark Nottingham for the feedback on HTTP redirection.
 
@@ -1280,7 +1281,6 @@ Internet-Draft       Encrypted DNS in Home Networks          August 2020
               "Neighbor Discovery for IP version 6 (IPv6)", RFC 4861,
               DOI 10.17487/RFC4861, September 2007,
               <https://www.rfc-editor.org/info/rfc4861>.
-
 
 
 
