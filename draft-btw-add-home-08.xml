@@ -635,16 +635,16 @@ with:
       </section>
     </section>
 
-    <section anchor="address" title="Locating DoH/DoT Servers">
+    <section anchor="address" title="Locating Encrypted DNS Servers">
       <t>From an IP reachability standpoint, encrypted DNS servers SHOULD be
       located by their address literals rather than passing the discovered
       names (ADN) to a resolution library. This avoids adding a dependency on
       another server to resolve the ADN.</t>
 
       <t>In the various scenarios sketched in <xref target="depl"></xref>,
-      Do53, DoH, DoT, and DoQ may terminate on the same IP address or distinct
-      IP addresses. Terminating Do53/DoH/DoT/DoQ on the same or distinct IP
-      addresses is deployment-specific.</t>
+      encrypted DNS servers may terminate on the same IP address or distinct
+      IP addresses. Terminating encrypted DNS servers on the same or distinct
+      IP addresses is deployment-specific.</t>
 
       <t>In order to optimize the size of discovery messages when all servers
       terminate on the same IP address, a CPE or a host relies upon the
@@ -652,21 +652,26 @@ with:
       target="RFC3646"></xref><xref target="RFC8106"></xref> to retrieve a
       list of IP addresses to reach their DNS servers.</t>
 
-      <t>In deployments where DoH/DoT/Do53 are not co-located, a list of
-      servers that is composed of DoH (and/or DoT) and Do53 servers can be
-      returned using in <xref target="RFC2132"></xref><xref
-      target="RFC3646"></xref><xref target="RFC8106"></xref>. A host that is
-      also DoH-capable (and/or DoT-capable), will try to establish a DoH
-      (and/or DoT) session to that list. DoT and/or DoH are supported if the
-      client succeeds to establish a session.</t>
+      <t>In deployments where encrypted DNS servers are not co-located, a list
+      of servers that is composed of encrypted DNS servers can be returned
+      using in <xref target="RFC2132"></xref><xref
+      target="RFC3646"></xref><xref target="RFC8106"></xref>. For example, a
+      host that is also DoH-capable (and/or DoT-capable), will try to
+      establish a DoH (and/or DoT) session to that list. DoT and/or DoH are
+      supported if the client succeeds to establish a session.</t>
 
       <t>Let's consider that the DoH server is reachable at
       2001:db8:122:300::2 while the Do53 server is reachable at
       2001:db8:122:300::1. The DHCP server will then return a list that
       includes both 2001:db8:122:300::1 and 2001:db8:122:300::2 to a
-      requesting DNS client. That list is passed to the DNS client. A legacy
-      Do53 client will select 2001:db8:122:300::1 while a DoH client will
-      select 2001:db8:122:300::2.</t>
+      requesting DNS client. That list is passed to the DNS client. The DNS
+      clients will try connecting to the DNS servers using both IP addresses
+      and the standard ports for DoH and Do53 protocols in a fashion similar
+      to the Happy Eyeballs mechanism defined in <xref
+      target="RFC8305"></xref>. The DoH client selects the IP address
+      2001:db8:122:300::2 with which the TLS session is established, whereas
+      the legacy Do53 client selects the IP address 2001:db8:122:300::1 with
+      which cleartext DNS messages are exchanged over UDP or TCP.</t>
 
       <t><figure>
           <artwork align="center" alt="distinct"
@@ -957,40 +962,40 @@ Legend:
         DoH/DoT/DoQ server and claim the best DNS privacy preservation
         policy.</t>
 
-        <t>In order to mitigate the attack, the DoH/DoT/DoQ server discovered
-        using insecure discovery mechanisms (like DHCP/RA) are only used if
-        that DoH/DoT/DoQ server is pre-configured in the OS or the browser.
-        <xref target="auto"></xref> identifies a set of deployment options
-        under which DHCP/RA RI options can be used. If the insecurely
-        discovered DoH/DoT/DoQ server is not pre-configured in the OS or
-        browser, the client must cryptographically assert the DNS server
-        identity to identify it is connecting to an encrypted DNS server
-        hosted by a specific organization <xref
-        target="I-D.reddy-add-server-policy-selection"></xref>.</t>
+        <t>The possible mitigations for this attack are listed below:</t>
 
-        <t>If the local DoH/DoT server offers malware and phishing filtering
-        service, an attacker can spoof the DHCP/RA response to provide an
-        non-filtering DNS server pre-configured in the OS or browser, which
-        the attacker can leverage to deliver malware or mislead the user to
-        access phishing sites. If the discovered encrypted does not meet the
-        filtering requirements of the user, the DNS client can take
-        appropriate actions. For example, the action by the DNS client can be
-        not use the locally-discovered DoH/DoT server if it does not offer
-        malware and phishing filtering service (e.g., <xref
-        target="I-D.reddy-add-server-policy-selection"></xref>).</t>
+        <t><list style="symbols">
+            <t>Encrypted DNS server pre-configured in the OS or browser. If
+            the local DoH/DoT server offers malware and phishing filtering
+            service, an attacker can spoof the DHCP/RA response to provide an
+            non-filtering DNS server pre-configured in the OS or browser,
+            which the attacker can leverage to deliver malware or mislead the
+            user to access phishing sites. If the discovered encrypted DNS
+            server does not meet the filtering requirements of the user, the
+            DNS client can take appropriate actions. For example, the action
+            by the DNS client can be not use the locally-discovered DoH/DoT
+            server if it does not offer malware and phishing filtering service
+            (e.g., <xref
+            target="I-D.reddy-add-server-policy-selection"></xref>).</t>
 
-        <t>In addition to the above security considerations, the client can
-        use STUN Binding request/response transaction to discover its public
-        IP address, as described in <xref target="RFC8489"></xref>. The IP
-        address ownership validation of the public IP address can be used by
-        the client to identify the organization that registers ownership of
-        the public IP address (using the freely available tools on the
-        Internet). If the DNS server is not hosted by the same organization,
-        the endpoint can detect DHCP/RA response is spoofed. In order to
-        prevent an attacker from modifying the STUN messages in transit, the
-        STUN client and server MUST use the message-integrity mechanism
-        discussed in Section 9 of <xref target="RFC8489"></xref> or use STUN
-        over DTLS or use STUN over TLS.</t>
+            <t>Cryptographically assert the DNS server identity to identify
+            the DNS client is connecting to an encrypted DNS server hosted by
+            a specific organization <xref
+            target="I-D.reddy-add-server-policy-selection"></xref>.</t>
+
+            <t>The client can use STUN Binding request/response transaction to
+            discover its public IP address, as described in <xref
+            target="RFC8489"></xref>. The IP address ownership validation of
+            the public IP address can be used by the client to identify the
+            organization that registers ownership of the public IP address
+            (using the freely available tools on the Internet). If the DNS
+            server is not hosted by the same organization, the endpoint can
+            detect DHCP/RA response is spoofed. In order to prevent an
+            attacker from modifying the STUN messages in transit, the STUN
+            client and server MUST use the message-integrity mechanism
+            discussed in Section 9 of <xref target="RFC8489"></xref> or use
+            STUN over DTLS or use STUN over TLS.</t>
+          </list></t>
 
         <t>DoT/DoH sessions with rogue servers spoofing the IP address of a
         DNS server will fail because the DNS client will fail to authenticate
@@ -1008,7 +1013,7 @@ Legend:
         However, the use of policies to select servers is out of scope of this
         document.</t>
 
-        <t>Note that attack deletion is not specifc to DHCP/RA.</t>
+        <t>Note that deletion attack is not specific to DHCP/RA.</t>
       </section>
 
       <section title="Passive Attacks">
@@ -1232,6 +1237,8 @@ Legend:
 
       <?rfc include='reference.RFC.8146'?>
 
+      <?rfc include='reference.RFC.8305'?>
+
       <reference anchor="TR-069"
                  target="https://www.broadband-forum.org/technical/download/TR-069.pdf">
         <front>
@@ -1356,11 +1363,11 @@ Legend:
     <section anchor="cust" title="Customized Port Numbers and IP Addresses">
       <t>DoT and DoQ may make use of customized port numbers instead of
       default ones. Also, if many encrypted DNS types are supported by a
-      network but terminate in distinct IP addresses, it is tempting to simply
-      the probing at the client side by returning both a port number and a
-      list of IP addresses in the option that conveys the ADN. An example of
-      such option is shown in <xref target="alt"></xref>. This design will
-      exacerbate the size of discovery messages.</t>
+      network but terminate in distinct IP addresses, it is tempting to
+      simplify the probing at the client side by returning both a port number
+      and a list of IP addresses in the option that conveys the ADN. An
+      example of such option is shown in <xref target="alt"></xref>. This
+      design will exacerbate the size of discovery messages.</t>
 
       <t>More input is required from the WG.</t>
 
