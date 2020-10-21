@@ -248,34 +248,18 @@
       Background-Check Model discussed in Section 5.2 and Section 5.3 of
       Remote attestation procedure (RATS) Architecture <xref
       target="I-D.ietf-rats-architecture"></xref>. RATS enables a relying
-      party (i.e., DNS client) to establish a level of confidence in the
-      trustworthiness of remote peer (i.e., Encrypted DNS server) through the
-      creation of attestation evidence about the remote peer to assess the
-      peer's trustworthiness, and a way to appraise such evidence. The
-      evidence is a set of claims (i.e., Policy Assertion Token (PAT)). An
-      attester (i.e., the organization hosting the Encrypted DNS server)
-      creates Evidence (i.e., PAT) and optionally Endorsement from an Endorser
-      (i.e., an auditor who performed security and privacy audit of the
-      Encrypted DNS server (e.g., Auditor Cure53 performed security audit of
-      VPN provider TunnelBear<xref target="Audit"> </xref>) to appraise the
-      authenticity of the Evidence. The back-ground check of the organization
-      hosting the Encrypted DNS server is done by a public CA and an Extended
-      Validation Certificate (EV) or Organization Validation (OV) Certificate
-      is issued by the CA only after verification of the requesting
-      organization's legal identity. For example, the Extended Validation
-      Certification Practice Statement of Comodo is explained in <xref
-      target="EV"></xref>. The PAT is attested using the OV/EV certificate
-      issued to the organization hosting the Encrypted DNS server and
-      optionally by a auditor. The relying party (i.e., DNS client) appraises
-      the validity of the Evidence (i.e., PAT) to assess the trustworthiness
-      of the remote peer (i.e., Encrypted DNS server) to identify it is
-      connecting to an encrypted DNS server hosted by a specific organization
-      (e.g., ISP). In this case, the Relying Party and Verifier are co-located
-      on the same machine (Section 5.3 of <xref
-      target="I-D.ietf-rats-architecture"></xref>) and the evidence is
-      revealed to the relying party (Section 7.2 of <xref
-      target="I-D.ietf-rats-architecture"></xref>).</t>
-
+      party to establish a level of confidence in the
+      trustworthiness of a remote peer through the
+      creation of attestation evidence to assess the
+      peer's trustworthiness, and a way to appraise such evidence.
+      In this document, the relying party is the DNS client and
+      remote peer is the encrypted DNS server.
+            The
+      evidence is a set of claims, which this document describes as
+      the Policy Assertion Token (PAT). The operator of the DNS server
+      attests to their own claims and an (optional) external endorser
+      <xref target="Audit"></xref> can provide higher confidence.</t>
+      
       <t>JSON Web Token (JWT) <xref target="RFC7519"></xref> and JSON Web
       Signature (JWS) <xref target="RFC7515"></xref> and related
       specifications define a standard token format that can be used as a way
