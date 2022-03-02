@@ -91,44 +91,34 @@ Table of Contents
    endpoints and the endpoint is unable to identify the reason why the
    public DNS server is not reachable.
 
-   If DNS resolvers not signaled by the network (e.g., DNS-over-TLS
-   (DoT) [RFC7858] or DNS-over-HTTPS (DoH) [RFC8484]) are used instead
-   of using network-designated DNS servers, it can adversely impact
-   Enterprise network-based security features.  Indeed, various network
-   security services are provided by Enterprise networks to protect
-   endpoints (e.g., laptops, printers, IoT devices) and to enforce
-   enterprise-specific policies.  These policies may be necessary to
-   protect employees, customers, or enterprise network.  It is out of
-   the scope of this memo to characterize such policies nor assess that
-   they achieve the claimed intent.  Nevertheless, network-designated
-   DNS servers in place for these purposes act on DNS messages involving
-   endpoints connected to the Enterprise network to enforce these
-   policies.  Therefore, if an endpoint uses a DNS resolver not signaled
-   by the network, the desired enterprise protection level and
-   enforcement will be bypassed and thus nullified.
-
-
+   DNS resolvers not signaled by the network (e.g., DNS-over-TLS
+   (DoT) [RFC7858] or DNS-over-HTTPS (DoH) [RFC8484]) will bypass
+   enterprise-specific policies, including security policies for
+   endpoints (e.g., laptops, printers, IoT devices), and routing 
+   to internal (private) enterprise domains. It is out of the scope 
+   of this memo to characterize such policies nor assess whether 
+   they achieve the claimed intent.
+   
 
 Reddy, et al.           Expires September 2, 2022               [Page 2]
 
 Internet-Draft       Network policy to use Resolvers          March 2022
 
 
-   In order to act on DNS messages involving endpoints connected to an
-   Enterprise network, network security services can be configured to
-   block DoT traffic by dropping outgoing packets to destination port
-   number 853.  Identifying DoH traffic is far more challenging than
-   identifying DoT traffic.  Network security services may try to
-   identify the well-known DoH resolvers by their domain name and DoH
-   traffic can be blocked by dropping outgoing packets to these domains.
-   However, DoH traffic can not be fully identified without acting as a
-   TLS proxy.
 
    With the advent of DoT and DoH, the network is unable to express any
-   such policy to the endpoints, and if the network is blocking
-   alternative resolvers, endpoints are unable to identify the reason
-   why their choice of public DNS resolver is not reachable.  This
-   results in incompatibilities with the privacy profiles discussed in
+   policy to the endpoints to explain why the network is blocking
+   alternative resolvers, and endpoints are unable to identify the 
+   reason why their choice of public DNS resolver is not reachable. 
+   Although network security services can be configured to block DoT 
+   traffic by dropping outgoing packets to destination port number 853, 
+   identifying DoH traffic is more challenging: network security services 
+   may try to identify the well-known DoH resolvers by their domain name 
+   and DoH traffic can be blocked by dropping outgoing packets to these 
+   domains. However, DoH traffic can not be fully identified without 
+   acting as a TLS proxy, with potenitally many undesired consequences.
+   
+   This results in incompatibilities with the privacy profiles discussed in
    [RFC8310]:
 
    o  If an endpoint has enabled strict privacy profile (Section 5 of
@@ -175,10 +165,10 @@ Internet-Draft       Network policy to use Resolvers          March 2022
 
    The term "enterprise network" in this document extends to a wide
    variety of deployment scenarios.  For example, an "enterprise" can be
-   a Small Office, Home Office or Corporation.  The clients that connect
-   to a enterprise network can securely authenticate that network and
-   the client is sure that it has connected to the network it was
-   expecting.
+   a Small Office, Home Office, Corporation, Education facility.  
+   The clients that connect to an enterprise network can securely 
+   authenticate that network and the client is sure that it has 
+   connected to the network it was expecting to.
 
 3.  PvD NetworkDNSOnly and ErrorNetworkDNSOnly Keys
 
@@ -202,7 +192,7 @@ Internet-Draft       Network policy to use Resolvers          March 2022
       code defined in [RFC8914] for the NetworkDNSOnly block.  This key
       is only present if NetworkDNSOnly is True.  Note that the extended
       error code "Blocked" defined in Section 4.16 of [RFC8914]
-      identifies access to domains is blocked due to an policy by the
+      indicates that access to domains is blocked due to a policy by the
       operator of the DNS server, extended error code "Censored" defined
       in Section 4.17 of [RFC8914] identifies access to domains is
       blocked based on a requirement from an external entity and the
@@ -210,11 +200,14 @@ Internet-Draft       Network policy to use Resolvers          March 2022
       [RFC8914] identifies access to domains is blocked based on the
       request from the client to blacklist domains.
 
-   Some enterprise networks require clients to query the network-
+   Where enterprise networks require clients to query the network-
    designated DNS servers, it sets the PvD NetworkDNSOnly key to True,
    otherwise sets NetworkDNSOnly to False.  If NetworkDNSOnly is set to
    True, it implies the network will block, or attempt to block, DNS
-   queries sent to DNS servers that were not signaled by the network.
+   queries sent to DNS servers that were not signaled by the network; 
+   and that any requests to resolve private domains internal to the network
+   will fail if an alternative DNS server is used. 
+
    If NetworkDNSOnly is True, the ErrorNetworkDNSOnly key MUST contain
    the extended DNS error code defined in [RFC8914] for this block.  The
    ErrorNetworkDNSOnly key is useful when the client does not use DNS
@@ -226,22 +219,21 @@ Reddy, et al.           Expires September 2, 2022               [Page 4]
 Internet-Draft       Network policy to use Resolvers          March 2022
 
 
-   resolution by the network-designated DNS server to reach the DNS
-   servers not signaled by the network.  For example, the client can be
-   pre-configured with both the domain name and IP addresses of the DNS
-   server not signaled by the network (Section 7.1 in [RFC8310]) or the
-   client can be pre-configured with the IP address of the resolver, and
-   it uses IP address in the certificate as identifier (see [RFC8738]).
-   In this case, the extended error code "Blocked" defined in [RFC8914]
-   cannot be returned to the client to provide additional information
-   about the cause for the block.  Further, the ErrorNetworkDNSOnly key
-   is useful when the network security service fails to block access to
-   the DNS server not signaled by the network but successfully filters
+   resolution by the network-designated DNS server to acquire the IP address
+   of an alternate DNS servers.  For example, the client can be
+   pre-configured with both the domain name and IP addresses of a non-network 
+   DNS server (Section 7.1 in [RFC8310]) or the client can be pre-configured 
+   with the IP address of the resolver, and it uses IP address in the certificate 
+   as identifier (see [RFC8738]). In this case, the extended error code 
+   "Blocked" defined in [RFC8914] cannot be returned to the client to provide 
+   additional information about the cause for the block.  Further, the 
+   ErrorNetworkDNSOnly key is useful when the network security service fails
+   to block access to the non-network DNS server but successfully filters
    traffic from the endpoint to IP addresses not conveyed to the
    endpoint as part of DNS resolution by the network-designated DNS
    server.
 
-   The NetworkDNSOnly set to True is an internal security policy
+   NetworkDNSOnly set to True is an internal security policy
    expression by the operator of the network but is not a policy
    prescription to the endpoints to disable its use of its other
    configured DNS servers; that is, the endpoint can ignore
